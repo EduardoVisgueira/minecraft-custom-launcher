@@ -1,0 +1,65 @@
+{
+  "name": "minecraft-custom-launcher",
+  "version": "1.0.0",
+  "description": "Launcher personalizado de Minecraft com suporte Forge, contas duplas e auto-updater",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && cross-env NODE_ENV=development electron .\"",
+    "build": "vite build && electron-builder",
+    "build:vite": "vite build",
+    "preview": "vite preview"
+  },
+  "build": {
+    "appId": "com.mclauncher.app",
+    "productName": "MC Launcher",
+    "directories": {
+      "output": "dist-app"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "assets/icon.ico",
+      "uninstallerIcon": "assets/icon.ico"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "launcher-config.json",
+      "assets/**/*",
+      "node_modules/**/*",
+      "!node_modules/.cache/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "launcher-config.json",
+        "to": "launcher-config.json"
+      },
+      {
+        "from": "assets",
+        "to": "assets"
+      }
+    ]
+  },
+  "keywords": ["minecraft", "launcher", "forge", "open-source"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "concurrently": "^9.0.1",
+    "cross-env": "^7.0.3",
+    "electron": "^32.0.0",
+    "electron-builder": "^25.0.5",
+    "vite": "^5.4.8",
+    "wait-on": "^8.0.1"
+  },
+  "dependencies": {
+    "@xmcl/core": "^2.15.1",
+    "@xmcl/installer": "^6.1.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}

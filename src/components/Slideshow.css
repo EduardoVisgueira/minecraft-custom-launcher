@@ -1,0 +1,49 @@
+.slideshow {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  overflow: hidden;
+  z-index: 0;
+}
+
+.slideshow--empty {
+  background: linear-gradient(135deg, #0a0a0a 0%, #141414 100%);
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+.slide--active {
+  opacity: 1;
+}
+
+.slideshow-dots {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 2;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transition: background 0.2s, transform 0.2s;
+  padding: 0;
+}
+
+.dot--active {
+  background: var(--accent);
+  transform: scale(1.3);
+}

@@ -1,0 +1,67 @@
+{
+  "_comment": "Config do FancyMenu para o menu principal. Distribua esta pasta dentro do modpack (.minecraft/fancymenu/).",
+  "version": 2,
+  "elements": [
+    {
+      "type": "slideshow",
+      "id": "background_slideshow",
+      "x": 0,
+      "y": 0,
+      "width": "%%screenwidth%%",
+      "height": "%%screenheight%%",
+      "order": -100,
+      "images": [
+        "fancymenu/assets/slideshow/bg1.png",
+        "fancymenu/assets/slideshow/bg2.png",
+        "fancymenu/assets/slideshow/bg3.png"
+      ],
+      "image_time": 5,
+      "fade_time": 1.0,
+      "fit_mode": "fill"
+    },
+    {
+      "type": "color_overlay",
+      "id": "dark_overlay",
+      "x": 0,
+      "y": 0,
+      "width": "%%screenwidth%%",
+      "height": "%%screenheight%%",
+      "order": -99,
+      "color": "#000000",
+      "opacity": 0.5
+    }
+  ],
+  "hide_vanilla_buttons": ["singleplayer"],
+  "custom_buttons": [
+    {
+      "id": "btn_multiplayer",
+      "label": "Multijogador",
+      "x": "%%center%%",
+      "y": 140,
+      "width": 200,
+      "height": 20,
+      "action": "vanilla_button",
+      "vanilla_id": "multiplayer"
+    },
+    {
+      "id": "btn_options",
+      "label": "Opções",
+      "x": "%%center%%",
+      "y": 165,
+      "width": 98,
+      "height": 20,
+      "action": "vanilla_button",
+      "vanilla_id": "options"
+    },
+    {
+      "id": "btn_quit",
+      "label": "Sair",
+      "x": "calc(%%center%% + 102)",
+      "y": 165,
+      "width": 98,
+      "height": 20,
+      "action": "vanilla_button",
+      "vanilla_id": "quit"
+    }
+  ]
+}

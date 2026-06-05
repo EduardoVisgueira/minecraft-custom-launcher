@@ -1,0 +1,38 @@
+{
+  "launcher_name": "MC Launcher",
+  "forge_version": "1.20.1-47.4.10",
+  "slideshow_images": [
+    "assets/slideshow/bg1.png",
+    "assets/slideshow/bg2.png",
+    "assets/slideshow/bg3.png"
+  ],
+  "slideshow_interval_ms": 5000,
+  "social_links": {
+    "discord": "https://discord.gg/LINK_AQUI",
+    "youtube": "https://youtube.com/@CANAL_AQUI",
+    "instagram": "",
+    "twitter": ""
+  },
+  "store_url": "https://LOJA_AQUI.com",
+  "news": [
+    {
+      "title": "Bem-vindo ao servidor!",
+      "body": "Configure este arquivo launcher-config.json para personalizar o launcher.",
+      "date": "2025-06-05"
+    }
+  ],
+  "modpack": {
+    "name": "Meu Modpack",
+    "manifest_url": "https://SEU_SERVIDOR.com/manifest.json",
+    "version": "1.0.0"
+  },
+  "ram": {
+    "default_mb": 4096,
+    "min_mb": 2048,
+    "max_mb": 16384
+  },
+  "theme": {
+    "accent_color": "#4ade80",
+    "background_overlay_opacity": 0.75
+  }
+}
