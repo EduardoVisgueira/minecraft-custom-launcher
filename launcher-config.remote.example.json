@@ -1,0 +1,65 @@
+{
+  "_comment": "Este e o config HOSPEDADO no seu servidor (a URL apontada por config_url no launcher-config.json do app). Edite este arquivo e publique para atualizar todos os jogadores SEM reinstalar o launcher. NAO precisa do campo config_url aqui. Imagens devem ser URLs https:// (caminhos locais como assets/... so funcionam no bootstrap embutido).",
+
+  "launcher_name": "Meu Servidor",
+  "login_title": "Bem-vindo ao Meu Servidor",
+  "login_subtitle": "Entre e venha jogar com a gente",
+  "play_button_label": "JOGAR AGORA",
+
+  "announcement": {
+    "text": "Manutencao programada hoje as 20h. O servidor ficara offline por ~30min.",
+    "type": "warning"
+  },
+
+  "forge_version": "1.20.1-47.4.10",
+
+  "slideshow_images": [
+    "https://exemplo.com/banners/banner1.jpg",
+    "https://exemplo.com/banners/banner2.jpg"
+  ],
+  "slideshow_interval_ms": 6000,
+
+  "social_links": {
+    "discord": "https://discord.gg/seulink",
+    "youtube": "https://youtube.com/@seucanal",
+    "twitter": "https://x.com/seuperfil",
+    "instagram": "https://instagram.com/seuperfil",
+    "tiktok": "https://tiktok.com/@seuperfil",
+    "telegram": "https://t.me/seucanal",
+    "website": "https://seusite.com"
+  },
+
+  "store_url": "https://sualoja.com",
+  "store_label": "Loja VIP",
+
+  "news": [
+    {
+      "title": "Servidor atualizado!",
+      "body": "Adicionamos 15 mods novos e corrigimos o lag.",
+      "date": "2026-06-08"
+    },
+    {
+      "title": "Evento de fim de semana",
+      "body": "Dobro de XP sabado e domingo.",
+      "date": "2026-06-10"
+    }
+  ],
+
+  "modpack": {
+    "name": "Meu Modpack",
+    "manifest_url": "https://seuservidor.com/manifest.json",
+    "version": "1.2.0"
+  },
+
+  "ram": {
+    "default_mb": 4096,
+    "min_mb": 2048,
+    "max_mb": 16384
+  },
+
+  "theme": {
+    "accent_color": "#10b981",
+    "background_overlay_opacity": 0.75,
+    "logo_url": "https://exemplo.com/logo.png"
+  }
+}

@@ -7,7 +7,10 @@
 }
 
 .slideshow--empty {
-  background: linear-gradient(135deg, #0a0a0a 0%, #141414 100%);
+  background:
+    radial-gradient(circle at 28% 18%, rgba(132, 204, 22, 0.12), transparent 55%),
+    radial-gradient(circle at 82% 88%, rgba(185, 28, 28, 0.08), transparent 45%),
+    linear-gradient(135deg, #0a0b0a 0%, #16170f 100%);
 }
 
 .slide {
@@ -17,11 +20,13 @@
   background-position: center;
   background-repeat: no-repeat;
   opacity: 0;
-  transition: opacity 1s ease;
+  transform: scale(1.06);
+  transition: opacity 1.1s ease, transform 6s ease;
 }
 
 .slide--active {
   opacity: 1;
+  transform: scale(1);
 }
 
 .slideshow-dots {
@@ -30,20 +35,31 @@
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 6px;
-  z-index: 2;
+  gap: 7px;
+  z-index: 4;
 }
 
 .dot {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.3);
-  transition: background 0.2s, transform 0.2s;
+  background: rgba(255, 255, 255, 0.32);
+  transition: width 0.3s ease, background 0.3s ease, box-shadow 0.3s ease, transform 0.2s var(--ease-spring);
   padding: 0;
 }
 
+.dot:hover {
+  background: rgba(255, 255, 255, 0.6);
+  transform: scale(1.25);
+}
+
+.dot:active {
+  transform: scale(1.1);
+}
+
 .dot--active {
+  width: 22px;
+  border-radius: 4px;
   background: var(--accent);
-  transform: scale(1.3);
+  box-shadow: 0 0 10px var(--accent-glow);
 }

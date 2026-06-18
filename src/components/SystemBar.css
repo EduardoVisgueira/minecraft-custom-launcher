@@ -1,0 +1,160 @@
+/* ─── SYSTEM BAR (barra de OS de búnker) ───────────────────────────────
+   Chapa de metal real (textura) sob overlay escuro p/ legibilidade.
+   Frameless: a barra inteira arrasta (-webkit-app-region: drag); botões e
+   logo são no-drag. */
+.system-bar {
+  position: relative;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  height: 42px;
+  flex-shrink: 0;
+  -webkit-app-region: drag;
+  background:
+    var(--sysbar-tex) center / cover no-repeat,
+    linear-gradient(180deg, rgba(30, 33, 28, 0.94), rgba(8, 9, 7, 0.96));
+  background-blend-mode: overlay, normal;
+  border-bottom: 1px solid rgba(132, 204, 22, 0.18);
+  box-shadow: inset 0 1px 0 var(--bevel-light), 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+/* Overlay escuro entre a textura e o texto — legibilidade primeiro */
+.system-bar-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(8, 9, 7, 0.55), rgba(8, 9, 7, 0.78));
+  z-index: 0;
+}
+
+/* Linha de solda + rebites na base da barra */
+.system-bar::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 4px;
+  pointer-events: none;
+  z-index: 1;
+  background:
+    radial-gradient(circle at 12px 50%, #5a5f54 0 1.2px, transparent 1.9px),
+    linear-gradient(180deg, var(--metal-2), var(--metal-3));
+  background-repeat: repeat-x, repeat-x;
+  background-size: 26px 4px, 100% 100%;
+  opacity: 0.7;
+}
+
+.system-bar > * { position: relative; z-index: 2; }
+
+/* ── Marca / logo do OS ── */
+.sysbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 16px;
+  -webkit-app-region: no-drag;
+}
+
+.sysbar-logo-mark {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  background-color: var(--accent);
+  -webkit-mask: var(--icon) center / contain no-repeat;
+  mask: var(--icon) center / contain no-repeat;
+  filter: drop-shadow(0 0 6px var(--accent-glow));
+}
+
+.sysbar-logo-text {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-shadow: 0 0 12px rgba(132, 204, 22, 0.2);
+  white-space: nowrap;
+}
+
+/* ── Readout central de status ── */
+.sysbar-status {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  white-space: nowrap;
+  transform: translateX(10px);
+}
+
+.sysbar-stat { display: inline-flex; align-items: center; gap: 6px; }
+
+.sysbar-sep { color: var(--text-dim); }
+
+.sysbar-stat--power {
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.sysbar-stat--power.is-online {
+  color: var(--accent);
+  /* flicker ocasional de luz de emergência (~8s, quase sempre estável) */
+  animation: emergencyFlicker 8s steps(1, end) infinite;
+}
+.sysbar-stat--power.is-offline { color: var(--danger-bright); }
+
+.sysbar-led {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent-glow);
+  animation: emergencyFlicker 5s steps(1, end) infinite;
+}
+.is-offline .sysbar-led {
+  background: var(--danger-bright);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+}
+
+.sysbar-clock {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.12em;
+}
+
+
+/* Área de arrasto flexível (mantém a zona de drag do frameless) */
+.sysbar-drag {
+  flex: 1;
+  height: 100%;
+}
+
+/* ── Controles de janela ── */
+.win-controls {
+  display: flex;
+  height: 100%;
+  -webkit-app-region: no-drag;
+}
+
+.win-btn {
+  width: 46px;
+  height: 100%;
+  background: transparent;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.win-btn:hover { background: rgba(255, 255, 255, 0.07); color: var(--text); }
+.win-btn:active { background: rgba(255, 255, 255, 0.12); }
+.win-close:hover { background: var(--danger); color: #fff; }
+.win-close:active { background: #c93030; color: #fff; }
+
+/* Em telas estreitas, o readout central some primeiro (drag continua ok) */
+@media (max-width: 720px) {
+  .sysbar-status { display: none; }
+}

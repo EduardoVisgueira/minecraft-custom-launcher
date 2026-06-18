@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" shape-rendering="crispEdges">
+  <defs>
+    <linearGradient id="sky2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2a3a6e"/>
+      <stop offset="40%" stop-color="#9d5a8e"/>
+      <stop offset="72%" stop-color="#e8895a"/>
+      <stop offset="100%" stop-color="#f7c074"/>
+    </linearGradient>
+    <linearGradient id="haze2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f7c074" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#ffd9a0" stop-opacity="0.6"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#sky2)"/>
+  <rect y="520" width="1600" height="220" fill="url(#haze2)"/>
+
+  <!-- Pixel setting sun, low on horizon -->
+  <g>
+    <rect x="700" y="420" width="200" height="140" fill="#ffdf8a"/>
+    <rect x="724" y="396" width="152" height="24" fill="#ffd070"/>
+    <rect x="700" y="404" width="24" height="16" fill="#ffd070" opacity="0.8"/>
+    <rect x="876" y="404" width="24" height="16" fill="#ffd070" opacity="0.8"/>
+    <rect x="676" y="448" width="24" height="84" fill="#ffe7a0" opacity="0.5"/>
+    <rect x="900" y="448" width="24" height="84" fill="#ffe7a0" opacity="0.5"/>
+  </g>
+
+  <!-- Dark blocky clouds catching light -->
+  <g fill="#7a4a72" opacity="0.85">
+    <rect x="120" y="170" width="300" height="40"/>
+    <rect x="170" y="138" width="180" height="30"/>
+    <rect x="1080" y="150" width="280" height="40"/>
+    <rect x="1140" y="120" width="160" height="28"/>
+  </g>
+  <g fill="#e08a64" opacity="0.7">
+    <rect x="430" y="280" width="220" height="32"/>
+    <rect x="980" y="300" width="200" height="30"/>
+  </g>
+
+  <!-- Mountain silhouettes -->
+  <g fill="#3b3258">
+    <polygon points="0,560 260,330 520,560"/>
+    <polygon points="420,560 760,280 1100,560"/>
+    <polygon points="980,560 1280,340 1600,560 1600,560"/>
+  </g>
+  <g fill="#574a78" opacity="0.7">
+    <polygon points="200,560 420,400 640,560"/>
+    <polygon points="1080,560 1300,410 1520,560"/>
+  </g>
+
+  <!-- Terrain, warmer tones -->
+  <rect x="0" y="560" width="1600" height="70" fill="#5e9a40"/>
+  <rect x="0" y="556" width="1600" height="10" fill="#73b552"/>
+  <g fill="#73b552">
+    <rect x="120" y="548" width="40" height="12"/>
+    <rect x="500" y="550" width="36" height="10"/>
+    <rect x="980" y="546" width="44" height="14"/>
+    <rect x="1380" y="550" width="36" height="10"/>
+  </g>
+
+  <rect x="0" y="630" width="1600" height="150" fill="#75492c"/>
+  <g fill="#603a22" opacity="0.55">
+    <rect x="160" y="668" width="70" height="44"/>
+    <rect x="520" y="704" width="80" height="50"/>
+    <rect x="900" y="654" width="70" height="44"/>
+    <rect x="1280" y="700" width="76" height="48"/>
+  </g>
+
+  <rect x="0" y="780" width="1600" height="120" fill="#6c6e74"/>
+  <g fill="#5a5c62" opacity="0.6">
+    <rect x="140" y="812" width="90" height="54"/>
+    <rect x="560" y="844" width="80" height="56"/>
+    <rect x="980" y="804" width="100" height="56"/>
+    <rect x="1380" y="840" width="96" height="60"/>
+  </g>
+
+  <!-- Tree silhouettes -->
+  <g fill="#2e4a26">
+    <rect x="330" y="494" width="24" height="70" fill="#3a2716"/>
+    <rect x="282" y="426" width="120" height="74"/>
+    <rect x="304" y="402" width="76" height="30"/>
+    <rect x="1224" y="500" width="22" height="64" fill="#3a2716"/>
+    <rect x="1182" y="444" width="108" height="62"/>
+    <rect x="1204" y="420" width="66" height="28"/>
+  </g>
+</svg>

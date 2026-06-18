@@ -1,0 +1,100 @@
+/* ─── STATUS BAR (rodapé de OS) ────────────────────────────────────────
+   Linha fina, monoespaçada, com indicadores de sistema. Chapa escura. */
+.status-bar {
+  position: relative;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 30px;
+  flex-shrink: 0;
+  padding: 0 12px;
+  background: linear-gradient(0deg, rgba(8, 9, 7, 0.96), rgba(20, 22, 18, 0.92));
+  border-top: 1px solid rgba(132, 204, 22, 0.16);
+  box-shadow: inset 0 1px 0 var(--bevel-light), 0 -2px 6px rgba(0, 0, 0, 0.35);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+/* Textura real de aço enferrujado, bem discreta (o gradiente escuro da barra
+   continua por baixo garantindo a legibilidade do texto mono pequeno) */
+.status-bar .status-bar-tex {
+  background-size: 180px;
+  opacity: 0.10;
+}
+
+.status-left,
+.status-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.status-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.status-sep {
+  width: 1px;
+  height: 14px;
+  background: var(--border-strong);
+  flex-shrink: 0;
+}
+
+/* Pílula online/offline */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.status-pill.is-online { color: var(--accent); }
+.status-pill.is-offline { color: var(--danger-bright); }
+
+.status-led {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 7px var(--accent-glow);
+  animation: pulseGlow 2.4s ease-in-out infinite;
+}
+.is-offline .status-led {
+  background: var(--danger-bright);
+  box-shadow: 0 0 7px rgba(239, 68, 68, 0.5);
+  animation: none;
+}
+
+/* Rótulo "conta:" + selector compacto inline */
+.status-account-label {
+  color: var(--text-dim);
+}
+
+.status-version { color: var(--text-muted); }
+
+.status-sector {
+  color: var(--accent);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.status-sector-icon {
+  width: 13px;
+  height: 13px;
+  background-color: var(--accent);
+  -webkit-mask: var(--icon) center / contain no-repeat;
+  mask: var(--icon) center / contain no-repeat;
+  filter: drop-shadow(0 0 4px var(--accent-glow));
+}
+
+@media (max-width: 640px) {
+  .status-version { display: none; }
+}

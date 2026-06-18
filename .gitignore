@@ -9,6 +9,7 @@ Thumbs.db
 # Electron build artifacts
 out/
 release/
+dist-electron/
 
 # User data (gerado em runtime)
 userdata/

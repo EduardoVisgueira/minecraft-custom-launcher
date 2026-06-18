@@ -1,0 +1,1 @@
+Coloque aqui as imagens dos banners (banner1.jpg, banner2.jpg...) e referencie elas em launcher-config.json -> slideshow_images.

@@ -1,17 +1,91 @@
 :root {
-  --accent: #4ade80;
-  --accent-dark: #22c55e;
-  --bg: #0a0a0a;
-  --surface: #141414;
-  --surface-2: #1e1e1e;
-  --surface-3: #272727;
-  --border: rgba(255, 255, 255, 0.07);
-  --text: #e5e5e5;
-  --text-muted: #888;
-  --text-dim: #555;
-  --danger: #ef4444;
+  /* ─── APOCALIPSE Z — "Quarantine Zone" ───────────────────────────────
+     Accent = verde-tóxico/biohazard (sobrescrito por JS a partir do config;
+     este valor é o fallback e DEVE casar com theme.accent_color). */
+  --accent: #84cc16;            /* verde-tóxico */
+  --accent-dark: #4d7c0f;       /* tóxico escuro (profundidade) */
+  --accent-soft: rgba(132, 204, 22, 0.13);
+  --accent-glow: rgba(132, 204, 22, 0.42);
+
+  /* Surfaces — asfalto/concreto queimado */
+  --bg: #0a0b0a;
+  --surface: #121311;
+  --surface-2: #181a16;
+  --surface-3: #23251f;
+
+  /* Borders */
+  --border: rgba(160, 180, 120, 0.08);
+  --border-strong: rgba(160, 180, 120, 0.16);
+
+  /* Text — papel velho/esverdeado */
+  --text: #eef0e6;
+  --text-muted: #9ca093;
+  --text-dim: #5b5e52;
+
+  /* Status — vermelho-sangue p/ perigo, âmbar p/ aviso */
+  --danger: #b91c1c;
+  --danger-bright: #ef4444;
+  --warn: #f59e0b;
+
+  /* Radii — UI mais "militar": cantos contidos */
+  --radius-sm: 5px;
   --radius: 8px;
-  --radius-lg: 12px;
+  --radius-lg: 11px;
+  --radius-xl: 14px;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.45);
+  --shadow: 0 8px 28px rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 18px 50px rgba(0, 0, 0, 0.65);
+
+  /* Tons temáticos (compat: nomes mc-* mantidos p/ não quebrar refs antigas).
+     Reapontados para a paleta tóxica/ferrugem/sangue. */
+  --mc-grass: #84cc16;          /* tóxico */
+  --mc-grass-light: #a3e635;    /* tóxico claro */
+  --mc-grass-dark: #4d7c0f;     /* tóxico escuro */
+  --mc-dirt: #8a5a36;
+  --mc-dirt-dark: #5e3c22;
+  --mc-stone: #6f7268;
+  --mc-bedrock: #1d1f1a;
+
+  /* Sangue/ferrugem (detalhes de perigo) */
+  --blood: #b91c1c;
+  --blood-dark: #7f1212;
+  --rust: #b45309;
+
+  /* Easing com personalidade (microinterações) */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ─── CHAPA DE METAL PARAFUSADA (búnker industrial) ─────────────────────
+     Tokens de moldura biselada + parafusos. NÃO altera a paleta (verde-tóxico,
+     sangue, âmbar continuam idênticos) — só adiciona tons frios de aço usados
+     APENAS sob o conteúdo e nos rebites. */
+  --metal-1: #2a2d2a;            /* aço claro (topo do bisel) */
+  --metal-2: #1d1f1c;            /* aço médio */
+  --metal-3: #141613;            /* aço escuro (sombra do bisel) */
+  --metal-line: rgba(0, 0, 0, 0.55);          /* linha de solda/divisória */
+  --bevel-light: rgba(170, 185, 150, 0.10);   /* realce do bisel (topo/esq) */
+  --bevel-dark: rgba(0, 0, 0, 0.55);          /* sombra do bisel (baixo/dir) */
+
+  /* Bisel reutilizável: realce no topo/esquerda + sombra embaixo/direita,
+     dando relevo de chapa estampada. Usar dentro de box-shadow. */
+  --plate-bevel:
+    inset 1px 1px 0 var(--bevel-light),
+    inset -1px -1px 0 var(--bevel-dark),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.35);
+
+  /* Chanfro padrão dos cantos cortados a 45° (placa industrial) */
+  --chamfer: 12px;
+  --chamfer-sm: 8px;
+
+  /* Fonts — Oswald condensada (militar/desgastada) em TÍTULOS/badges; Inter no corpo */
+  --font: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-display: 'Oswald', 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Consolas', 'Courier New', monospace;
+  /* Títulos/badges = Oswald (condensada, com presença de estêncil militar) */
+  --font-pixel: 'Oswald', 'Inter', system-ui, sans-serif;
+  --font-pixel-soft: 'Oswald', 'Inter', system-ui, sans-serif;
 }
 
 *, *::before, *::after {
@@ -26,10 +100,197 @@ html, body, #root {
   overflow: hidden;
   background: var(--bg);
   color: var(--text);
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-family: var(--font);
   font-size: 14px;
   line-height: 1.5;
   user-select: none;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ─── Atmosfera apocalíptica (camada de fundo) ────────────────────────
+   Grão sutil + grade de concreto bem fraca. Atrás de tudo (z-index 0). */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    /* grão/ruído fino via gradiente repetido em diagonais opostas */
+    repeating-linear-gradient(27deg, rgba(255,255,255,0.012) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(-63deg, rgba(0,0,0,0.10) 0 1px, transparent 1px 4px),
+    /* grade de concreto/asfalto */
+    linear-gradient(rgba(180, 200, 140, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(180, 200, 140, 0.015) 1px, transparent 1px);
+  background-size: 5px 5px, 5px 5px, 34px 34px, 34px 34px;
+  opacity: 0.7;
+}
+
+/* Vinheta + scanlines MUITO sutis, na frente do conteúdo mas sem capturar clique */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background:
+    radial-gradient(120% 100% at 50% 42%, transparent 52%, rgba(0,0,0,0.30) 82%, rgba(0,0,0,0.62) 100%),
+    repeating-linear-gradient(0deg, rgba(0,0,0,0.06) 0 1px, transparent 1px 3px);
+  mix-blend-mode: multiply;
+}
+
+#root { position: relative; z-index: 1; }
+
+/* Pixel-font helpers (use sparingly) */
+.mc-pixel {
+  font-family: var(--font-pixel);
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+/* ─── Fita de perigo (hazard tape): listras diagonais amarelo/preto ─────
+   Detalhe decorativo reutilizável. Use em finas barras horizontais. */
+.hazard-tape {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    #d9a40a 0 14px,
+    #15140c 14px 28px
+  );
+  background-size: 39.6px 39.6px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.45);
+}
+/* desgaste: mancha escura por cima da fita */
+.hazard-tape::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 18% 50%, rgba(0,0,0,0.35), transparent 22%),
+    radial-gradient(circle at 73% 50%, rgba(0,0,0,0.30), transparent 18%);
+  pointer-events: none;
+}
+
+/* Marca d'água "BIOHAZARD"/título com cara de estêncil militar */
+.stencil {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+@keyframes hazardScroll {
+  from { background-position: 0 0; }
+  to   { background-position: 39.6px 0; }
+}
+
+/* ─── PARAFUSO 3D (.bolt) — técnica reutilizável de cabeça de parafuso ───
+   Profundidade real em 4 camadas:
+   (a) fundo do span  = anel externo escuro (rebaixo estampado na chapa);
+   (b) ::before       = cabeça em gradiente radial DESLOCADO (luz vinda de
+                        cima-esquerda: highlight no topo, sombra na base);
+   (c) ::after        = fenda em cruz (linhas escuras com 1px de highlight
+                        abaixo = entalhe), girada por --bolt-rot;
+   (d) drop-shadow    = micro sombra projetada na chapa.
+   Use <span className="bolt bolt--tl" aria-hidden="true" /> nos cantos.
+   Varie --bolt-rot por canto para não parecer carimbo. */
+.bolt {
+  --bolt-size: 11px;
+  --bolt-rot: 0deg;
+  position: absolute;
+  width: var(--bolt-size);
+  height: var(--bolt-size);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 6;
+  /* rebaixo na chapa: anel escuro com leve borda de luz embaixo */
+  background:
+    radial-gradient(circle at 50% 58%,
+      rgba(0, 0, 0, 0.62) 0 52%, rgba(0, 0, 0, 0.30) 64%, transparent 74%);
+  /* fio de luz na borda inferior do rebaixo (a chapa "pega" a luz de cima) */
+  box-shadow: 0 1px 0 rgba(170, 185, 150, 0.07);
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.55));
+}
+.bolt::before {
+  content: '';
+  position: absolute;
+  inset: 11%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 30% 24%, rgba(238, 243, 224, 0.40) 0 16%, transparent 44%),
+    radial-gradient(circle at 36% 30%, #8b9179 0%, #5e644f 38%, #3a3e2f 68%, #131510 100%);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.22),
+    inset 0 -1.5px 2px rgba(0, 0, 0, 0.70),
+    0 1px 1px rgba(0, 0, 0, 0.50);
+}
+.bolt::after {
+  content: '';
+  position: absolute;
+  inset: 11%;
+  border-radius: 50%;
+  transform: rotate(var(--bolt-rot));
+  background:
+    linear-gradient(180deg,
+      transparent calc(50% - 1.4px),
+      rgba(7, 8, 5, 0.88) calc(50% - 1.4px) calc(50% + 0.4px),
+      rgba(214, 224, 190, 0.30) calc(50% + 0.4px) calc(50% + 1.4px),
+      transparent calc(50% + 1.4px)),
+    linear-gradient(90deg,
+      transparent calc(50% - 1.4px),
+      rgba(7, 8, 5, 0.82) calc(50% - 1.4px) calc(50% + 0.4px),
+      rgba(214, 224, 190, 0.18) calc(50% + 0.4px) calc(50% + 1.4px),
+      transparent calc(50% + 1.4px));
+  -webkit-mask: radial-gradient(circle, #000 0 56%, transparent 63%);
+  mask: radial-gradient(circle, #000 0 56%, transparent 63%);
+}
+.bolt--sm { --bolt-size: 9px; }
+.bolt--lg { --bolt-size: 13px; }
+/* Cantos com rotações levemente diferentes (não parece carimbo) */
+.bolt--tl { top: 6px; left: 6px; --bolt-rot: 14deg; }
+.bolt--tr { top: 6px; right: 6px; --bolt-rot: -23deg; }
+.bolt--bl { bottom: 6px; left: 6px; --bolt-rot: 31deg; }
+.bolt--br { bottom: 6px; right: 6px; --bolt-rot: -9deg; }
+
+/* ─── TEXTURA REAL SOB O CONTEÚDO (.panel-tex) ───────────────────────────
+   Span absoluto com a textura (JPG importado via Vite) em blend overlay e
+   opacidade baixa — profundidade sem matar a legibilidade (o conteúdo fica
+   por cima; o painel-pai PRECISA ser stacking context: clip-path, z-index
+   ou isolation). Uso: <span className="panel-tex" style={{backgroundImage}}/> */
+.panel-tex {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-repeat: repeat;
+  background-size: 240px;
+  opacity: 0.16;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+/* Ícone recolorível (SVG via mask, herda currentColor / background-color) */
+.mask-ic {
+  display: inline-block;
+  flex-shrink: 0;
+  background-color: currentColor;
+  -webkit-mask: var(--icon) center / contain no-repeat;
+  mask: var(--icon) center / contain no-repeat;
+}
+
+/* Etiqueta/número de série estampado num canto (sutil) */
+.plate-tag {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(170, 185, 150, 0.28);
+  pointer-events: none;
+  user-select: none;
+  z-index: 4;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.6);
 }
 
 button {
@@ -38,6 +299,7 @@ button {
   outline: none;
   font-family: inherit;
   font-size: inherit;
+  color: inherit;
 }
 
 input {
@@ -46,10 +308,15 @@ input {
   font-size: inherit;
 }
 
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .spinner {
-  width: 32px;
-  height: 32px;
-  border: 3px solid var(--border);
+  width: 34px;
+  height: 34px;
+  border: 3px solid var(--border-strong);
   border-top-color: var(--accent);
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
@@ -59,8 +326,114 @@ input {
   to { transform: rotate(360deg); }
 }
 
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 var(--accent-glow); }
+  50%      { box-shadow: 0 0 22px 2px var(--accent-glow); }
+}
+
+/* Entrada de painéis ao trocar de aba */
+@keyframes panelIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Flutuação suave (ícones de estado vazio) */
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-5px); }
+}
+
+/* Pulso tóxico (glow biohazard que respira) — só box-shadow/opacity */
+@keyframes toxicPulse {
+  0%, 100% { box-shadow: 0 0 0 0 var(--accent-glow), 0 0 14px rgba(132, 204, 22, 0.18); }
+  50%      { box-shadow: 0 0 18px 2px var(--accent-glow), 0 0 28px rgba(132, 204, 22, 0.28); }
+}
+
+/* Engrenagem decorativa girando bem devagar — só transform */
+@keyframes gearSpin {
+  to { transform: rotate(360deg); }
+}
+@keyframes gearSpinCCW {
+  to { transform: rotate(-360deg); }
+}
+
+/* "● REC" piscando (terminal) — só opacity */
+@keyframes recBlink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.25; }
+}
+
+/* Scanline varrendo um card (hover de transmissões) — transform/opacity */
+@keyframes scanSweep {
+  0%   { transform: translateY(-10%); opacity: 0; }
+  12%  { opacity: 0.55; }
+  88%  { opacity: 0.55; }
+  100% { transform: translateY(1200%); opacity: 0; }
+}
+
+/* Reflexo de luz varrendo uma chapa em loop lento — transform/opacity.
+   Pensado p/ um "facho" estreito (~35-40% da largura do painel) que começa
+   fora à esquerda; os % de translateX são da largura do PRÓPRIO facho. */
+@keyframes plateSweep {
+  0%   { transform: translateX(-60%) skewX(-16deg); opacity: 0; }
+  8%   { opacity: 0.5; }
+  34%  { opacity: 0.5; }
+  46%  { transform: translateX(460%) skewX(-16deg); opacity: 0; }
+  100% { transform: translateX(460%) skewX(-16deg); opacity: 0; }
+}
+
+/* Flicker de luz de emergência (tremular irregular) — só opacity */
+@keyframes emergencyFlicker {
+  0%, 100% { opacity: 1; }
+  8%       { opacity: 0.55; }
+  10%      { opacity: 1; }
+  42%      { opacity: 0.85; }
+  44%      { opacity: 0.4; }
+  46%      { opacity: 1; }
+  72%      { opacity: 0.7; }
+}
+
+/* ─── Acessibilidade: reduz movimento globalmente ─────────────────────
+   Loops decorativos e transições viram no-ops; spinners e barras de
+   carregamento continuam (são feedback funcional, não decoração).
+   Cobre TAMBÉM os loops novos (gearSpin, recBlink, scanSweep, plateSweep,
+   travas do cofre): a regra universal congela qualquer animação em 1
+   iteração de 0.01ms — os elementos varredores nascem com opacity:0, então
+   congelados ficam invisíveis, nunca "presos" no meio da tela. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .spinner,
+  .spinner-sm,
+  .spinner-sm-dark,
+  .icon-spin {
+    animation-duration: 0.7s !important;
+    animation-iteration-count: infinite !important;
+  }
+
+  .splash-fill {
+    animation-duration: 1.1s !important;
+    animation-iteration-count: infinite !important;
+  }
+}
+
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -69,5 +442,12 @@ input {
 
 ::-webkit-scrollbar-thumb {
   background: var(--surface-3);
-  border-radius: 3px;
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3a3a44;
+  background-clip: padding-box;
 }

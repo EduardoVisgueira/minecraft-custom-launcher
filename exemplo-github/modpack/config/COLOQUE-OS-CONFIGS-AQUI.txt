@@ -1,0 +1,1 @@
+Coloque aqui a pasta config/ do seu modpack (arquivos de configuracao dos mods).

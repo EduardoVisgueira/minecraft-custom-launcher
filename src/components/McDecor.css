@@ -1,0 +1,159 @@
+/* ─── Decorações temáticas: correntes enferrujadas + lanterna de emergência ──
+   Apocalipse Z. Anima apenas transform/opacity/filter.
+
+   FIX "correntes sumiram": o container .hero-chains/.login-chains fica acima do
+   slideshow, mas a corrente é estreita (12px) e escura sobre fundo escuro com
+   overlay pesado — ela "desaparecia" por falta de contraste. Agora cada elo
+   ganha ferrugem (sépia/saturação) + um leve rim-glow tóxico, então a corrente
+   lê-se claramente contra qualquer slide. */
+
+.mc-chain {
+  position: relative;
+  width: 26px; /* hitbox um pouco mais larga que a corrente, p/ hover fácil */
+  height: calc(var(--chain-len, 96px) + 4px);
+  display: flex;
+  justify-content: center;
+  pointer-events: auto;
+  -webkit-app-region: no-drag;
+}
+
+.mc-chain--lantern {
+  height: calc(var(--chain-len, 96px) + 40px);
+}
+
+.mc-chain-pendulum {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform-origin: top center;
+  will-change: transform;
+  animation: mcChainIdle 7s ease-in-out var(--sway-delay, 0s) infinite;
+}
+
+/* Hover = "empurrão": oscila e decai até parar (termina em 0°, sem saltos) */
+.mc-chain.is-swinging .mc-chain-pendulum {
+  animation: mcChainSwing 1.9s cubic-bezier(0.37, 0, 0.63, 1) both;
+}
+
+/* Ponto de ancoragem: uma argola/parafuso enferrujado no topo de onde a corrente
+   "sai" do teto. Dá peso e esconde a emenda superior. */
+.mc-chain-pendulum::before {
+  content: '';
+  width: 10px;
+  height: 6px;
+  margin-bottom: -2px;
+  border-radius: 3px 3px 1px 1px;
+  background: linear-gradient(180deg, #5a5147 0%, #2c2722 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+.mc-chain-links {
+  display: block;
+  width: 12px;                /* tira esquerda (3px) da textura, ×4 */
+  height: var(--chain-len, 96px);
+  background-repeat: repeat-y;
+  background-size: 64px 64px; /* 16×16 ×4 → emenda vertical perfeita */
+  background-position: 0 0;
+  image-rendering: pixelated;
+  /* Ferrugem: dá tom de metal velho/oxidado e separa do fundo com um rim-glow
+     tóxico bem fraco + sombra projetada. */
+  filter:
+    sepia(0.35) saturate(1.15) brightness(0.92) contrast(1.05)
+    drop-shadow(0 0 1px rgba(132, 204, 22, 0.28))
+    drop-shadow(0 3px 4px rgba(0, 0, 0, 0.55));
+}
+
+/* Corrente sem lanterna: a ponta some suavemente no escuro */
+.mc-chain:not(.mc-chain--lantern) .mc-chain-links {
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 26px), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 26px), transparent);
+}
+
+/* ─── Lanterna de emergência ────────────────────────────────────────── */
+.mc-lantern {
+  position: relative;
+  margin-top: -2px;
+  width: 24px;
+  height: 40px;
+}
+
+/* Glow tóxico de emergência que tremula (só opacity, via emergencyFlicker) */
+.mc-lantern::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 55%;
+  width: 104px;
+  height: 104px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle,
+    rgba(163, 230, 53, 0.34) 0%,
+    rgba(132, 204, 22, 0.14) 38%,
+    transparent 70%
+  );
+  pointer-events: none;
+  animation: emergencyFlicker 4.2s steps(1, end) infinite;
+}
+
+/* Variante "soul": luz de alerta vermelho-sangue (perigo) */
+.mc-lantern--soul::before {
+  background: radial-gradient(
+    circle,
+    rgba(239, 68, 68, 0.32) 0%,
+    rgba(185, 28, 28, 0.14) 38%,
+    transparent 70%
+  );
+}
+
+.mc-lantern-sprite {
+  position: relative;
+  display: block;
+  /* lantern.png é ANIMADA: 3 frames de 16×16 empilhados (16×48). Mostramos só a
+     face frontal (coluna esquerda, 6px) do 1º frame, ampliada ×4. */
+  width: 24px;   /* 6px × 4 */
+  height: 40px;  /* 10px × 4 — só alça + gaiola com luz (corta a base escura) */
+  background-size: 64px 192px;  /* 16×4 por 48×4 → escala correta da textura animada */
+  background-position: 0 0;       /* topo-esquerda = frente da lanterna, frame 1 */
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  /* puxa o laranja da lanterna pro VERDE tóxico + glow + sombra */
+  filter:
+    hue-rotate(72deg) saturate(1.3) brightness(1.05)
+    drop-shadow(0 0 4px rgba(163, 230, 53, 0.45))
+    drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
+}
+
+.mc-lantern--soul .mc-lantern-sprite {
+  filter:
+    hue-rotate(-60deg) saturate(1.2)
+    drop-shadow(0 0 3px rgba(239, 68, 68, 0.32))
+    drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
+}
+
+/* ─── Keyframes ─────────────────────────────────────────────────────── */
+@keyframes mcChainIdle {
+  0%, 100% { transform: rotate(0deg); }
+  25%      { transform: rotate(1.4deg); }
+  75%      { transform: rotate(-1.4deg); }
+}
+
+@keyframes mcChainSwing {
+  0%   { transform: rotate(0deg); }
+  18%  { transform: rotate(7deg); }
+  42%  { transform: rotate(-5.2deg); }
+  64%  { transform: rotate(3.1deg); }
+  82%  { transform: rotate(-1.5deg); }
+  100% { transform: rotate(0deg); }
+}
+
+/* Acessibilidade: sem balanço/flicker para quem prefere menos movimento */
+@media (prefers-reduced-motion: reduce) {
+  .mc-chain-pendulum,
+  .mc-chain.is-swinging .mc-chain-pendulum,
+  .mc-lantern::before {
+    animation: none;
+  }
+}

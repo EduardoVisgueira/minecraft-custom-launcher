@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import metalPlate02Tex from '../../assets/textures/metal_plate_02.jpg'
+import skullCrackIcon from '../../assets/game-icons/lorc_skull-crack.svg'
 import './AccountSelector.css'
 
-export default function AccountSelector({ account, onLogout, onAccountChange }) {
+export default function AccountSelector({ account, onLogout, onAccountChange, compact = false }) {
   const [open, setOpen] = useState(false)
   const [accounts, setAccounts] = useState(null)
 
@@ -28,21 +30,26 @@ export default function AccountSelector({ account, onLogout, onAccountChange }) 
   }
 
   return (
-    <div className="account-selector">
+    <div className={`account-selector${compact ? ' account-selector--compact' : ''}`}>
       <button className="account-btn" onClick={open ? () => setOpen(false) : loadAccounts}>
         <div className="account-avatar">
           {account.username.charAt(0).toUpperCase()}
         </div>
-        <div className="account-info">
-          <span className="account-name">{account.username}</span>
-          <span className="account-type">
-            {account.type === 'microsoft' ? 'Premium' : 'Offline'}
-          </span>
-        </div>
+        {!compact && (
+          <div className="account-info">
+            <span className="account-name">{account.username}</span>
+            <span className="account-type">
+              {account.type === 'microsoft' ? 'Premium' : 'Offline'}
+            </span>
+          </div>
+        )}
+        {compact && <span className="account-name account-name--compact">{account.username}</span>}
       </button>
 
       {open && accounts && (
         <div className="account-dropdown">
+          {/* Chapa metálica: textura real */}
+          <span className="panel-tex" style={{ backgroundImage: `url(${metalPlate02Tex})` }} aria-hidden="true" />
           <div className="dropdown-header">Contas</div>
           {accounts.map(acc => (
             <div
@@ -69,6 +76,7 @@ export default function AccountSelector({ account, onLogout, onAccountChange }) 
           ))}
           <div className="dropdown-divider" />
           <button className="dropdown-logout" onClick={onLogout}>
+            <span className="mask-ic dropdown-logout-ic" style={{ '--icon': `url(${skullCrackIcon})` }} aria-hidden="true" />
             Sair
           </button>
         </div>

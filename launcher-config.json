@@ -1,19 +1,31 @@
 {
-  "launcher_name": "MC Launcher",
+  "config_url": "",
+  "launcher_name": "Apocalipse Z",
   "forge_version": "1.20.1-47.4.10",
+  "login_title": "Acesso à Zona",
+  "login_subtitle": "Identifique-se para entrar na quarentena",
+  "play_button_label": "ENTRAR NA ZONA",
+  "announcement": {
+    "text": "",
+    "type": "info"
+  },
   "slideshow_images": [
-    "assets/slideshow/bg1.png",
-    "assets/slideshow/bg2.png",
-    "assets/slideshow/bg3.png"
+    "assets/slideshow/mine1.jpg",
+    "assets/slideshow/mine2.jpg",
+    "assets/slideshow/mine3.png"
   ],
   "slideshow_interval_ms": 5000,
   "social_links": {
     "discord": "https://discord.gg/LINK_AQUI",
     "youtube": "https://youtube.com/@CANAL_AQUI",
     "instagram": "",
-    "twitter": ""
+    "twitter": "",
+    "tiktok": "",
+    "telegram": "",
+    "website": ""
   },
   "store_url": "https://LOJA_AQUI.com",
+  "store_label": "Loja",
   "news": [
     {
       "title": "Bem-vindo ao servidor!",
@@ -22,9 +34,10 @@
     }
   ],
   "modpack": {
-    "name": "Meu Modpack",
-    "manifest_url": "https://SEU_SERVIDOR.com/manifest.json",
-    "version": "1.0.0"
+    "name": "Zona Morta",
+    "manifest_url": "https://raw.githubusercontent.com/EduardoVisgueira/launcherz/main/manifest.json",
+    "version": "1.0.0",
+    "forge_version": "1.20.1-47.4.10"
   },
   "ram": {
     "default_mb": 4096,
@@ -32,7 +45,8 @@
     "max_mb": 16384
   },
   "theme": {
-    "accent_color": "#4ade80",
-    "background_overlay_opacity": 0.75
+    "accent_color": "#84cc16",
+    "background_overlay_opacity": 0.8,
+    "logo_url": ""
   }
 }

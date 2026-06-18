@@ -1,0 +1,50 @@
+{
+  "launcher_name": "Apocalipse Z",
+  "forge_version": "1.20.1-47.4.10",
+  "login_title": "Bem-vindo, sobrevivente",
+  "login_subtitle": "Entre e encare o apocalipse",
+  "play_button_label": "JOGAR",
+  "announcement": {
+    "text": "",
+    "type": "info"
+  },
+  "slideshow_images": [
+    "https://raw.githubusercontent.com/SEU_USUARIO/SEU_REPO/main/banners/banner1.jpg",
+    "https://raw.githubusercontent.com/SEU_USUARIO/SEU_REPO/main/banners/banner2.jpg",
+    "https://raw.githubusercontent.com/SEU_USUARIO/SEU_REPO/main/banners/banner3.jpg"
+  ],
+  "slideshow_interval_ms": 5000,
+  "social_links": {
+    "discord": "https://discord.gg/SEU_LINK",
+    "youtube": "https://youtube.com/@SEU_CANAL",
+    "instagram": "",
+    "twitter": "",
+    "tiktok": "",
+    "telegram": "",
+    "website": ""
+  },
+  "store_url": "https://SUA_LOJA.com",
+  "store_label": "Loja",
+  "news": [
+    {
+      "title": "Servidor no ar!",
+      "body": "O apocalipse começou. Junte-se ao Discord para participar das raids.",
+      "date": "2026-06-11"
+    }
+  ],
+  "modpack": {
+    "name": "Apocalipse Z",
+    "manifest_url": "https://raw.githubusercontent.com/SEU_USUARIO/SEU_REPO/main/modpack/manifest.json",
+    "version": "1.0.0"
+  },
+  "ram": {
+    "default_mb": 4096,
+    "min_mb": 2048,
+    "max_mb": 16384
+  },
+  "theme": {
+    "accent_color": "#10b981",
+    "background_overlay_opacity": 0.75,
+    "logo_url": ""
+  }
+}

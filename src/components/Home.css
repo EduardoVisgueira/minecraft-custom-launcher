@@ -1,281 +1,1494 @@
+@import url('https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap');
+
+/* ─── Shell: OS de búnker (coluna: tab-nav · tela · status-bar no App) ─── */
 .home {
   display: flex;
+  flex-direction: column;
   flex: 1;
+  min-height: 0;
   overflow: hidden;
 }
 
-/* ─── Sidebar ─────────────────────────────────────────────────────────── */
-.sidebar {
-  width: 200px;
+/* ─── NAVEGAÇÃO POR ABAS no topo (substitui a sidebar lateral) ───────────
+   Chapa de metal real (textura) sob overlay escuro p/ legibilidade. */
+.tab-nav {
+  position: relative;
   flex-shrink: 0;
-  background: var(--surface);
-  border-right: 1px solid var(--border);
+  z-index: 30;
+  background: linear-gradient(180deg, rgba(24, 27, 22, 0.95), rgba(10, 11, 9, 0.96));
+  border-bottom: 1px solid rgba(132, 204, 22, 0.18);
+  box-shadow: inset 0 1px 0 var(--bevel-light), 0 3px 8px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+
+/* Textura de chapa por baixo, bem sutil (overlay escuro do .tab-nav por cima) */
+.tab-nav-tex {
+  position: absolute;
+  inset: 0;
+  background-repeat: repeat;
+  background-size: 240px;
+  opacity: 0.10;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Linha de solda + rebites na base da barra de abas */
+.tab-nav::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 4px;
+  pointer-events: none;
+  z-index: 1;
+  background:
+    radial-gradient(circle at 12px 50%, #5a5f54 0 1.2px, transparent 1.9px),
+    linear-gradient(180deg, var(--metal-2), var(--metal-3));
+  background-repeat: repeat-x, repeat-x;
+  background-size: 26px 4px, 100% 100%;
+  opacity: 0.7;
+}
+
+.tab-nav-inner {
+  position: relative;
+  z-index: 2;
   display: flex;
-  flex-direction: column;
-  padding: 16px 0;
-}
-
-.sidebar-logo {
-  padding: 0 16px 16px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 8px;
-}
-
-.sidebar-logo span {
-  font-size: 15px;
-  font-weight: 800;
-  color: var(--accent);
-  letter-spacing: -0.02em;
-}
-
-.sidebar-nav {
-  display: flex;
-  flex-direction: column;
+  align-items: stretch;
   gap: 2px;
-  padding: 0 8px;
-  flex: 1;
+  padding: 0 10px;
+  height: 46px;
 }
 
-.nav-item {
+.tab-btn {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 9px 10px;
-  border-radius: var(--radius);
+  gap: 9px;
+  padding: 0 18px;
   background: transparent;
   color: var(--text-muted);
-  font-size: 13px;
-  font-weight: 500;
-  transition: background 0.15s, color 0.15s;
-  text-align: left;
-  width: 100%;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: color 0.18s ease, background 0.18s ease;
 }
 
-.nav-item:hover {
-  background: var(--surface-2);
+.tab-btn-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  background-color: currentColor;
+  -webkit-mask: var(--icon) center / contain no-repeat;
+  mask: var(--icon) center / contain no-repeat;
+  transition: filter 0.2s ease, transform 0.22s var(--ease-spring);
+}
+
+.tab-btn-underline {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent-glow);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.22s var(--ease-out);
+}
+
+.tab-btn:hover {
   color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
 }
+.tab-btn:hover .tab-btn-icon { transform: scale(1.12); }
 
-.nav-item.active {
-  background: rgba(74, 222, 128, 0.1);
+/* Aba ativa "acesa" (accent) */
+.tab-btn.active {
   color: var(--accent);
+  background: linear-gradient(180deg, rgba(132, 204, 22, 0.10), transparent);
+}
+.tab-btn.active .tab-btn-icon {
+  filter: drop-shadow(0 0 6px var(--accent-glow));
+}
+.tab-btn.active .tab-btn-underline { transform: scaleX(1); }
+
+/* Loja: item externo (seta no canto) */
+.tab-btn--external { color: var(--text-dim); }
+.tab-btn-ext-arrow {
+  opacity: 0.55;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+.tab-btn--external:hover .tab-btn-ext-arrow {
+  opacity: 1;
+  transform: translate(1px, -1px);
 }
 
-.sidebar-socials {
+/* Social links empurrados para a direita da barra de abas */
+/* Esteira (ticker) de transmissões no topo, à direita das abas */
+.tab-ticker {
+  flex: 1 1 auto;             /* preenche do Terminal até a direita */
+  min-width: 0;
+  margin-left: 22px;
   display: flex;
-  gap: 6px;
-  padding: 12px 16px;
-  border-top: 1px solid var(--border);
+  align-items: center;        /* centraliza verticalmente na barra */
+  overflow: hidden;
+  -webkit-app-region: no-drag;
+  /* fade só na ENTRADA (esquerda); sólida até a borda direita do launcher */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 5%, #000 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 5%, #000 100%);
+}
+.tab-ticker-track {
+  display: inline-flex;
+  align-items: center;
+  gap: 34px;
+  white-space: nowrap;
+  will-change: transform;
+  animation: tabTicker 30s linear infinite;
+}
+.tab-ticker:hover .tab-ticker-track { animation-play-state: paused; }
+.tab-ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  transition: color 0.16s ease;
+}
+.tab-ticker-item:hover { color: var(--mc-grass-light); }
+.tab-ticker-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent-glow);
+  flex-shrink: 0;
+}
+/* da esquerda p/ a direita (2 cópias = loop sem emenda) */
+@keyframes tabTicker {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tab-ticker-track { animation: none; }
 }
 
-.social-btn {
+.tab-nav-socials {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 12px;
+  padding-left: 12px;
+}
+
+.tab-nav-socials .social-btn {
   width: 32px;
   height: 32px;
-  border-radius: var(--radius);
-  background: var(--surface-2);
+  border-radius: 3px;
+  background: linear-gradient(160deg, var(--metal-1), var(--surface-2));
+  border: 1px solid rgba(0, 0, 0, 0.5);
   color: var(--text-muted);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.15s, color 0.15s;
+  box-shadow: var(--plate-bevel);
+  transition: color 0.18s ease, transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+.tab-nav-socials .social-btn:hover {
+  color: var(--mc-grass-light);
+  border-color: rgba(132, 204, 22, 0.4);
+  box-shadow: var(--plate-bevel), 0 0 12px rgba(132, 204, 22, 0.25);
+  transform: translateY(-2px);
+  filter: brightness(1.2);
 }
 
-.social-btn:hover {
-  background: var(--surface-3);
-  color: var(--text);
-}
-
-.sidebar-account {
-  padding: 12px 8px 0;
-  border-top: 1px solid var(--border);
-}
-
-/* ─── Main content ────────────────────────────────────────────────────── */
+/* ─── Main content (tela do sistema) ──────────────────────────────────── */
 .main-content {
   flex: 1;
+  min-height: 0;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  background:
+    radial-gradient(circle at 78% -12%, rgba(132, 204, 22, 0.06), transparent 46%),
+    radial-gradient(circle at 12% 108%, rgba(185, 28, 28, 0.05), transparent 42%);
 }
 
-/* ─── Home tab ────────────────────────────────────────────────────────── */
+/* ─── BASE (aba inicial): cofre central como protagonista ─────────────── */
 .tab-home {
+  position: relative;
   flex: 1;
+  min-height: 0;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  animation: panelIn 0.32s var(--ease-out);
 }
 
-.home-hero {
-  position: relative;
-  height: 280px;
-  flex-shrink: 0;
-  overflow: hidden;
-}
-
-.hero-overlay {
+/* Slideshow vira ATMOSFERA de fundo (atrás, escurecido) */
+.base-bg {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, transparent 40%, var(--bg) 100%);
-  z-index: 1;
+  z-index: 0;
+  overflow: hidden;
   pointer-events: none;
 }
 
-.hero-text {
+/* Escurece o slide para o conteúdo ficar legível por cima */
+.base-bg-overlay {
   position: absolute;
-  bottom: 20px;
-  left: 24px;
+  inset: 0;
+  z-index: 1;
+  background:
+    radial-gradient(120% 90% at 50% 42%, transparent 30%, rgba(8, 9, 7, 0.62) 78%, rgba(8, 9, 7, 0.86) 100%),
+    linear-gradient(180deg, rgba(8, 9, 7, 0.74) 0%, rgba(8, 9, 7, 0.55) 30%, rgba(8, 9, 7, 0.78) 100%),
+    radial-gradient(140% 120% at 50% 100%, rgba(132, 204, 22, 0.08), transparent 50%);
+}
+
+/* Grade de aço enferrujada nas laterais (textura, baixa opacidade) */
+.base-bg-grate {
+  position: absolute;
+  inset: 0;
   z-index: 2;
+  background-repeat: repeat;
+  background-size: 180px;
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+  -webkit-mask-image: linear-gradient(90deg, #000 0 12%, transparent 28% 72%, #000 88% 100%);
+  mask-image: linear-gradient(90deg, #000 0 12%, transparent 28% 72%, #000 88% 100%);
 }
 
-.hero-text h2 {
-  font-size: 22px;
-  font-weight: 800;
-  margin-bottom: 4px;
+/* Barras de quarentena (pixel, MC) na borda direita */
+.base-bg-bars {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: clamp(60px, 12vw, 140px);
+  z-index: 2;
+  background-repeat: repeat;
+  background-size: 48px 48px;
+  image-rendering: pixelated;
+  opacity: 0.12;
+  -webkit-mask-image: linear-gradient(to left, #000 8%, transparent 92%);
+  mask-image: linear-gradient(to left, #000 8%, transparent 92%);
+  filter: brightness(0.85) contrast(1.1);
 }
 
-.hero-version {
-  font-size: 12px;
-  color: var(--text-muted);
-  background: rgba(0,0,0,0.5);
-  padding: 2px 8px;
-  border-radius: 4px;
+/* Correntes de quarentena penduradas no topo da BASE */
+.base-chains {
+  position: absolute;
+  top: -2px;
+  right: clamp(20px, 6vw, 64px);
+  z-index: 6;            /* acima da .base-screen (5) p/ as lâmpadas receberem hover */
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  pointer-events: none;  /* só os .mc-chain (auto) capturam — não bloqueia o resto */
 }
 
-/* ─── Launch panel ───────────────────────────────────────────────────── */
-.launch-panel {
-  padding: 20px 24px;
+/* Conteúdo da BASE acima do fundo */
+.tab-home > .announce-bar,
+.base-screen {
+  position: relative;
+  z-index: 5;
+}
+
+.tab-home > .announce-bar {
+  margin: 14px 18px 0;
+}
+
+/* Grade de readouts em volta do cofre */
+.base-screen {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) auto minmax(220px, 1fr);
+  /* os 3 blocos (info · letreiro · painel) numa LINHA só, lá embaixo;
+     o cenário aparece no topo. Pra subir/descer a linha toda: padding-top. */
+  align-items: center;
+  gap: clamp(20px, 4vw, 56px);
+  padding: clamp(190px, 44vh, 520px) clamp(28px, 6vw, 80px) clamp(20px, 4vh, 50px);
+  overflow-y: auto;
+}
+
+/* ── Readouts de sistema (placas) ── */
+.base-readout {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
+  min-width: 0;
+}
+.base-readout--controls { align-items: stretch; max-width: 300px; margin-left: auto; }
+
+/* Stagger: os 3 blocos da BASE entram em cascata ao abrir a aba */
+.base-screen > .base-readout--status   { animation: fadeUp 0.45s var(--ease-out) both; animation-delay: 60ms; }
+.base-screen > .vault-stage            { animation: fadeUp 0.45s var(--ease-out) both; animation-delay: 140ms; }
+.base-screen > .base-readout--controls { animation: fadeUp 0.45s var(--ease-out) both; animation-delay: 220ms; }
+
+.readout-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+}
+.readout-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 1px;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent-glow);
+  animation: emergencyFlicker 5s steps(1, end) infinite;
 }
 
-.launch-actions {
+/* Ícone temático no eyebrow (gas-mask / pipes via mask, cor = accent) */
+.readout-eyebrow .readout-eyebrow-ic {
+  width: 15px;
+  height: 15px;
+  opacity: 0.92;
+  filter: drop-shadow(0 0 5px var(--accent-glow));
+}
+
+.base-modpack-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(28px, 3.4vw, 46px);
+  line-height: 0.98;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.85), 0 0 30px rgba(132, 204, 22, 0.12);
+}
+
+.base-badges {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 10px;
 }
 
-.btn-update {
-  display: flex;
+.base-badge {
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
-  background: var(--surface-2);
-  color: var(--text-muted);
-  border-radius: var(--radius);
-  font-weight: 500;
+  gap: 7px;
+  font-family: var(--font-pixel-soft);
   font-size: 13px;
-  border: 1px solid var(--border);
-  transition: background 0.15s, color 0.15s;
-  flex-shrink: 0;
-}
-
-.btn-update:hover:not(:disabled) {
-  background: var(--surface-3);
+  line-height: 1;
+  font-weight: 700;
   color: var(--text);
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid var(--border-strong);
+  padding: 7px 12px;
+  border-radius: 6px;
+  backdrop-filter: blur(8px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-.btn-update:disabled { opacity: 0.5; cursor: not-allowed; }
+/* Selo de status do modpack (muda em tempo real ao sincronizar) */
+/* Botãozinho de download ao lado do v2.4: apagado quando em dia, VERDE c/ pulso
+   quando há atualização (clicável). */
+.base-dl {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  border: 1px solid var(--border-strong);
+  background: rgba(0, 0, 0, 0.45);
+  color: var(--text-dim);
+  cursor: not-allowed;
+  -webkit-app-region: no-drag;
+  transition: color .18s, background .18s, border-color .18s, box-shadow .18s, transform .15s var(--ease-out), filter .15s ease;
+}
+.base-dl:disabled { opacity: 0.5; }
+.base-dl.has-update {
+  color: #0c1603;
+  background: linear-gradient(180deg, var(--mc-grass-light), var(--mc-grass));
+  border-color: var(--mc-grass-dark);
+  cursor: pointer;
+  opacity: 1;
+  box-shadow: 0 0 12px var(--accent-glow);
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+.base-dl.has-update:hover { transform: translateY(-2px); filter: brightness(1.1); }
 
-.btn-launch {
-  flex: 1;
+.base-badge--accent {
+  color: #0c1603;
+  background: linear-gradient(180deg, var(--mc-grass-light), var(--mc-grass));
+  border-color: var(--mc-grass-dark);
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.base-badge--btn {
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+  transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.16s ease, box-shadow 0.16s ease;
+}
+.base-badge--btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.07);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 6px 18px var(--accent-glow);
+}
+.base-badge--btn:active { transform: translateY(0); }
+.base-badge-caret { opacity: 0.65; margin-left: 2px; transition: transform 0.16s ease, opacity 0.16s ease; }
+.base-badge--btn:hover .base-badge-caret { transform: translateY(2px); opacity: 1; }
+
+/* ─── COFRE CENTRAL = botão JOGAR ("ENTRAR NA ZONA") ──────────────────── */
+.vault-stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-self: center;
+  /* nudge do letreiro na vertical: positivo desce só ele (alinha com info/painel,
+     compensando a altura das correntes). aumenta p/ descer mais. */
+  transform: translateY(clamp(34px, 6vh, 76px));
+}
+
+/* ════════════════════════════════════════════════════════════
+   Botão JOGAR — letreiro PIXEL ART pendurado (hanging sign do MC)
+   Arte 100% desenhada em SVG (crispEdges) no PlaySign.jsx; aqui só
+   o layout, o texto entalhado e as animações de balanço/clique.
+   ════════════════════════════════════════════════════════════ */
+.play-sign-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.play-sign {
+  position: relative;
+  display: block;
+  width: clamp(300px, 34vw, 470px);
+  aspect-ratio: 3 / 2;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+  transition: filter 0.15s ease;
+  /* SEM animação no botão: a viga fica parada; só a placa (.play-sign-board) balança */
+}
+/* VIGA fixa no topo (parafusada — não mexe). Fica POR CIMA p/ os suportes
+   cobrirem o topo das correntes (vendem a ilusão de pêndulo). */
+.play-sign-beam {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  pointer-events: none;
+  z-index: 2;
+  filter: drop-shadow(0 5px 7px rgba(0, 0, 0, 0.4));
+}
+/* PLACA + CORRENTES: o grupo que BALANÇA, pivô no topo (onde as correntes
+   prendem na viga). Ajuste o pivô em transform-origin se precisar. */
+.play-sign-board {
+  position: absolute;
+  inset: 0;
+  display: block;
+  z-index: 1;
+  transform-origin: 50% 14%;
+  animation: sign-sway 5s ease-in-out infinite;
+}
+.play-sign-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.5));
+  pointer-events: none;
+}
+/* texto entalhado sobre as tábuas (região central do quadro) */
+.play-sign-text {
+  position: absolute;
+  left: 25%;
+  right: 25%;
+  top: 36%;
+  bottom: 26%;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 12px;
-  background: var(--accent);
-  color: #000;
-  border-radius: var(--radius);
-  font-weight: 800;
-  font-size: 15px;
-  transition: background 0.15s, opacity 0.15s;
+  gap: 10px;
+  pointer-events: none;
+}
+.play-sign-line {
+  font-family: 'Silkscreen', var(--font-display);
+  font-weight: 700;
+  font-size: clamp(14px, 1.7vw, 22px);
+  line-height: 1.1;
+  text-align: center;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #c6f24a;                    /* verde tóxico */
+  /* entalhe: base escura encravada + leve brilho */
+  text-shadow: 0 1px 0 #16240a, 0 2px 0 rgba(0, 0, 0, 0.6), 0 0 10px rgba(132, 204, 22, 0.45);
+}
+/* seta de play em pixel (triângulo verde entalhado) */
+.play-sign-arrow {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 8px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 8px 0 8px 13px;
+  border-color: transparent transparent transparent #c6f24a;
+  filter: drop-shadow(0 1px 0 #16240a) drop-shadow(0 0 6px rgba(132, 204, 22, 0.5));
+}
+/* balanço sutil do letreiro pendurado */
+/* balanço da placa + leve subida (translateY) p/ a corrente não escapar da viga */
+@keyframes sign-sway {
+  0%, 100% { transform: translateY(-5px) rotate(-1.3deg); }
+  50%      { transform: translateY(-5px) rotate(1.3deg); }
+}
+.play-sign:hover:not(:disabled) {
+  /* só brilho no hover — NÃO mudar animation-duration (reinicia o swing e dá o "pulo") */
+  filter: brightness(1.12);
+}
+.play-sign:active:not(:disabled) { filter: brightness(0.9); }
+.play-sign:disabled { cursor: not-allowed; filter: saturate(0.4) brightness(0.7); }
+.play-sign:disabled .play-sign-board { animation-play-state: paused; }
+/* loading: texto pulsa + reticências animadas */
+.play-sign.is-loading .play-sign-line { animation: sign-pulse 1s ease-in-out infinite; }
+@keyframes sign-pulse { 0%, 100% { opacity: 0.65; } 50% { opacity: 1; } }
+.play-sign .dots::after { content: ''; animation: sign-dots 1.2s steps(1, end) infinite; }
+@keyframes sign-dots {
+  0%   { content: ''; }
+  25%  { content: '.'; }
+  50%  { content: '..'; }
+  75%  { content: '...'; }
+}
+/* legenda do modpack abaixo do botão */
+.mc-play-sub {
+  margin-top: 18px;
+  font-family: 'Silkscreen', var(--font-display);
+  font-size: clamp(9px, 0.85vw, 11px);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mc-grass-light, #a7d36a);
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.7);
+  opacity: 0.85;
 }
 
-.btn-launch:hover:not(:disabled) { background: var(--accent-dark); }
-.btn-launch:disabled { opacity: 0.5; cursor: not-allowed; }
+/* Sinal de biohazard estampado atrás do cofre (marca-d'água) */
+.vault-biohazard {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(360px, 38vw, 520px);
+  height: clamp(360px, 38vw, 520px);
+  transform: translate(-50%, -54%);
+  background-color: var(--accent);
+  -webkit-mask: var(--icon) center / contain no-repeat;
+  mask: var(--icon) center / contain no-repeat;
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: 0;
+}
 
+.vault {
+  position: relative;
+  width: clamp(220px, 26vw, 320px);
+  height: clamp(220px, 26vw, 320px);
+  border-radius: 50%;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+  z-index: 1;
+  perspective: 1100px;
+  filter: drop-shadow(0 16px 34px rgba(0, 0, 0, 0.6));
+  transition: transform 0.2s var(--ease-spring), filter 0.25s ease;
+}
+
+/* Interior do cofre (revelado quando a porta entreabre): parede de concreto/aço
+   escura com anel de profundidade + luz tóxica vindo de dentro. */
+.vault-interior {
+  position: absolute;
+  inset: 15%;
+  border-radius: 50%;
+  background-position: center;
+  background-size: cover;
+  background-blend-mode: overlay;
+  background-color: #0c0e09;
+  overflow: hidden;
+  /* aro de aço na boca + sombra projetada da porta (lado esquerdo) */
+  box-shadow:
+    inset 0 0 0 3px rgba(0, 0, 0, 0.75),
+    inset 0 0 0 6px rgba(95, 105, 85, 0.18),
+    inset 0 0 55px rgba(0, 0, 0, 0.95),
+    inset 16px 0 42px rgba(0, 0, 0, 0.92);
+  filter: grayscale(0.7) brightness(0.5) contrast(1.1);
+  z-index: 0;
+}
+/* parede traseira rebaixada (profundidade do compartimento) */
+.vault-interior::after {
+  content: '';
+  position: absolute;
+  inset: 16%;
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 0 2px rgba(80, 90, 70, 0.22),
+    inset 0 6px 20px rgba(0, 0, 0, 0.85),
+    0 -3px 14px rgba(0, 0, 0, 0.7);
+}
+/* luz tóxica pulsando do fundo do cofre */
+.vault-interior-glow {
+  position: absolute;
+  top: 50%;
+  left: 56%;
+  width: 60%;
+  height: 60%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(132, 204, 22, 0.4), transparent 65%);
+  filter: blur(8px);
+  opacity: 0;
+  z-index: 1;
+}
+.vault.is-unlocking .vault-interior-glow { animation: toxicPulse 1.6s ease-in-out infinite; }
+.vault:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.012);
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.62)) drop-shadow(0 0 26px rgba(132, 204, 22, 0.30));
+}
+.vault:active:not(:disabled) { transform: translateY(1px) scale(0.99); }
+.vault:disabled { cursor: not-allowed; }
+
+/* Anel externo de aço enferrujado (flange, textura real) */
+.vault-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-blend-mode: overlay;
+  box-shadow:
+    inset 0 0 0 3px rgba(0, 0, 0, 0.6),
+    inset 0 0 0 6px rgba(120, 130, 110, 0.18),
+    inset 0 6px 14px rgba(0, 0, 0, 0.55),
+    inset 0 -6px 14px rgba(0, 0, 0, 0.45);
+  /* cinza metálico (tira o tom amarelo/madeira da textura) */
+  filter: grayscale(0.85) brightness(0.92) contrast(1.08);
+}
+
+/* Aro interno biselado que separa a flange da porta (limpo, sem travas soltas) */
+.vault-ring::before {
+  content: '';
+  position: absolute;
+  inset: 11%;
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 0 2px rgba(0, 0, 0, 0.55),
+    inset 0 0 0 3px rgba(150, 165, 130, 0.10),
+    0 1px 0 rgba(150, 165, 130, 0.06);
+  pointer-events: none;
+}
+
+/* Parafusos 3D na flange (diagonais, entre as travas) */
+/* 8 parafusos uniformes em anel na flange (posição radial via --a) */
+.vault .vault-bolt {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(var(--a)) translateY(-118px);
+  z-index: 2;
+}
+
+/* Porta interna (chapa de aço-tóxico): BISEL DUPLO + sombra interna forte */
+.vault-door {
+  position: absolute;
+  inset: 15%;
+  border-radius: 50%;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-blend-mode: overlay;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    /* 1º bisel: aro escuro + fio de aço */
+    inset 0 0 0 2px rgba(0, 0, 0, 0.6),
+    inset 0 0 0 5px rgba(150, 165, 130, 0.12),
+    inset 0 0 0 7px rgba(0, 0, 0, 0.40),
+    /* profundidade: sombra interna pesada (porta rebaixada na flange) */
+    inset 0 8px 22px rgba(0, 0, 0, 0.62),
+    inset 0 -5px 14px rgba(0, 0, 0, 0.5),
+    inset 0 0 30px rgba(132, 204, 22, 0.10);
+  filter: brightness(0.92) contrast(1.02);
+  overflow: hidden;
+  /* dobradiça à esquerda: a porta entreabre ao destravar */
+  transform-origin: 12% center;
+  transition: transform 0.8s var(--ease-out);
+  backface-visibility: hidden;
+  z-index: 1;
+}
+/* 2º bisel: chapa interna rebaixada (anel de relevo a 7% da borda) */
+.vault-door::before {
+  content: '';
+  position: absolute;
+  inset: 8%;
+  border-radius: 50%;
+  box-shadow:
+    inset 0 1px 0 rgba(195, 210, 170, 0.10),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.55),
+    0 1px 0 rgba(195, 210, 170, 0.06),
+    0 -2px 5px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+/* Reflexo de luz varrendo a porta em loop lento (opacity baixa) */
+.vault-sheen {
+  position: absolute;
+  top: -12%;
+  bottom: -12%;
+  left: -34%;
+  width: 38%;
+  background: linear-gradient(90deg, transparent, rgba(228, 240, 205, 0.13), transparent);
+  opacity: 0;
+  animation: plateSweep 7.5s linear infinite;
+  pointer-events: none;
+}
+
+/* ESCOTILHA = protagonista da porta: verde-tóxico brilhante, centralizada.
+   Gira de leve no hover e continuamente ao destravar. */
+/* Roda de válvula metálica central (aço, NÃO verde) — gira pra abrir.
+   O verde fica só como glow ambiente atrás, não na peça. */
+/* RODA DE COFRE de 3 braços (handwheel), construída em CSS para ter
+   profundidade real: braços cilíndricos cromados + hub de metal escovado. */
+.vault-wheel {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60%;
+  height: 60%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.7));
+  transition: transform 0.55s var(--ease-out);
+}
+.vault:hover:not(:disabled) .vault-wheel { transform: translate(-50%, -50%) rotate(40deg); }
+
+/* braço cilíndrico cromado, sai do centro (transform-origin no topo) */
+.vault-spoke {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 11px;
+  height: 50%;
+  margin-left: -5.5px;
+  transform-origin: 50% 0;
+  transform: rotate(var(--a));
+  border-radius: 6px;
+  background: linear-gradient(90deg, #3a3e38 0%, #b6bbb1 30%, #f4f6f0 50%, #9aa094 70%, #2f332d 100%);
+  border: 1px solid rgba(0, 0, 0, 0.45);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 1px 3px rgba(0, 0, 0, 0.55);
+}
+/* pega (cilindro perpendicular) na ponta de cada braço */
+.vault-spoke::after {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 19px;
+  height: 11px;
+  border-radius: 5px;
+  background: linear-gradient(180deg, #eceee8, #888d82 55%, #34382f);
+  border: 1px solid rgba(0, 0, 0, 0.45);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+/* hub central = metal escovado/torneado (conic) + highlight cromado */
+.vault-hub {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 48%;
+  height: 48%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 36%, rgba(255, 255, 255, 0.6), transparent 46%),
+    conic-gradient(from 0deg,
+      #888d83, #e8ebe2, #9aa094, #f1f3ed, #7c817760, #d6dacd, #9aa094, #eceee8, #888d83);
+  border: 1px solid rgba(0, 0, 0, 0.55);
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 255, 255, 0.28),
+    inset 0 0 0 4px rgba(0, 0, 0, 0.32),
+    0 2px 7px rgba(0, 0, 0, 0.7);
+}
+
+/* Glow tóxico que pulsa no centro da porta (atrás da escotilha) */
+.vault-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 62%;
+  height: 62%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(132, 204, 22, 0.45), transparent 68%);
+  filter: blur(6px);
+  animation: toxicPulse 3.2s ease-in-out infinite;
+  pointer-events: none;
+}
+.vault:hover:not(:disabled) .vault-glow { animation-duration: 1.8s; }
+
+/* Válvula (gira ao destravar) */
+.vault-valve {
+  position: absolute;
+  width: 78%;
+  height: 78%;
+  background-color: rgba(20, 24, 16, 0.85);
+  -webkit-mask: var(--icon) center / contain no-repeat;
+  mask: var(--icon) center / contain no-repeat;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.6));
+  transition: transform 0.4s var(--ease-out);
+}
+.vault:hover:not(:disabled) .vault-valve { transform: rotate(10deg); }
+
+/* Manivela/knob central — MAIOR (legível) — gira no hover e ao destravar */
+.vault-knob {
+  position: absolute;
+  width: 56%;
+  height: 56%;
+  background-color: var(--accent);
+  -webkit-mask: var(--icon) center / contain no-repeat;
+  mask: var(--icon) center / contain no-repeat;
+  filter:
+    drop-shadow(0 2px 2px rgba(0, 0, 0, 0.65))
+    drop-shadow(0 0 10px var(--accent-glow));
+  transition: transform 0.4s var(--ease-spring);
+}
+.vault:hover:not(:disabled) .vault-knob { transform: rotate(-22deg); }
+
+/* Legenda do cofre = CHAPA METÁLICA PARAFUSADA (estêncil tóxico no aço) */
+.vault-label {
+  position: absolute;
+  left: 50%;
+  bottom: -14px;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 26px;
+  white-space: nowrap;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(13px, 1.2vw, 16px);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mc-grass-light);
+  text-shadow: 0 0 12px var(--accent-glow), 0 1px 0 rgba(0, 0, 0, 0.7);
+  background: linear-gradient(180deg, #3b4036, #23261f 55%, #171a14);
+  border: 1px solid rgba(0, 0, 0, 0.65);
+  border-radius: 4px;
+  box-shadow:
+    var(--plate-bevel),
+    0 4px 12px rgba(0, 0, 0, 0.55),
+    0 0 16px rgba(132, 204, 22, 0.20);
+  transition: transform 0.16s var(--ease-out), filter 0.16s ease, box-shadow 0.16s ease;
+}
+.vault:hover:not(:disabled) .vault-label {
+  transform: translateX(-50%) translateY(2px);
+  filter: brightness(1.12);
+  box-shadow:
+    var(--plate-bevel),
+    0 4px 12px rgba(0, 0, 0, 0.55),
+    0 0 24px rgba(132, 204, 22, 0.38);
+}
+.vault:disabled .vault-label { opacity: 0.6; }
+
+/* Parafusos da chapinha (1 de cada lado, centrados na vertical) */
+.vault-label .vault-label-bolt { top: 50%; margin-top: -4.5px; }
+.vault-label .vault-label-bolt--l { left: 6px; --bolt-rot: 24deg; }
+.vault-label .vault-label-bolt--r { right: 6px; --bolt-rot: -37deg; }
+
+/* Cadeado-engrenagem estampado antes do texto */
+.vault-label .vault-label-ic {
+  width: 15px;
+  height: 15px;
+  opacity: 0.95;
+}
+
+/* Spinner legível sobre a chapa escura (era dark-on-green) */
+.vault-label .spinner-sm-dark {
+  border-color: rgba(132, 204, 22, 0.25);
+  border-top-color: var(--accent);
+}
+
+/* Engrenagens decorativas girando devagar perto do cofre (opacity baixa) */
+.vault-stage .vault-gear {
+  position: absolute;
+  background-color: var(--accent);
+  opacity: 0.10;
+  pointer-events: none;
+  z-index: 0;
+}
+.vault-gear--a {
+  width: clamp(64px, 8vw, 96px);
+  height: clamp(64px, 8vw, 96px);
+  top: -4%;
+  left: -10%;
+  animation: gearSpin 38s linear infinite;
+}
+.vault-gear--b {
+  width: clamp(42px, 5.4vw, 64px);
+  height: clamp(42px, 5.4vw, 64px);
+  bottom: 6%;
+  right: -7%;
+  animation: gearSpinCCW 27s linear infinite;
+}
+
+/* ── Animação de "destravar": válvula/knob/TRAVAS giram + FLASH tóxico ── */
+.vault.is-unlocking { pointer-events: none; }
+/* a roda gira (destrava); depois a porta ENTREABRE revelando o interior */
+.vault.is-unlocking .vault-wheel { animation: wheelSpin 1.3s linear infinite; }
+.vault.is-unlocking .vault-door {
+  /* entreabre SUTIL: a roda continua visível e inclinada, sem achatar/sumir */
+  transform: rotateY(-20deg) translateX(-1%);
+  transition-delay: 0.45s;
+  /* sombra projetada da porta sobre o interior = sensação de espessura/profundidade */
+  filter: brightness(0.95) contrast(1.04) drop-shadow(14px 2px 16px rgba(0, 0, 0, 0.7));
+}
+.vault.is-unlocking .vault-glow {
+  animation: toxicPulse 0.9s ease-in-out infinite;
+  background: radial-gradient(circle, rgba(132, 204, 22, 0.75), transparent 70%);
+}
+/* mantém o cinza (sem voltar ao tom de ferrugem/marrom durante o launch) */
+.vault.is-unlocking .vault-ring { filter: grayscale(0.85) brightness(1.0) contrast(1.12); }
+
+@keyframes vaultSpin {
+  to { transform: rotate(360deg); }
+}
+/* roda da válvula girando (preserva o translate de centralização) */
+@keyframes wheelSpin {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* ─── Modal "instância já aberta" ─────────────────────────────────────── */
+.run-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 6, 4, 0.72);
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.15s ease;
+  -webkit-app-region: no-drag;
+}
+.run-modal {
+  width: min(420px, 90vw);
+  padding: 24px 24px 20px;
+  background: linear-gradient(165deg, var(--metal-1), var(--surface) 40%, var(--metal-3));
+  border: 1px solid rgba(0, 0, 0, 0.6);
+  border-radius: var(--radius);
+  box-shadow: var(--plate-bevel), var(--shadow-lg);
+  animation: fadeUp 0.2s var(--ease-out);
+}
+.run-modal h3 {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--warn);
+  margin-bottom: 8px;
+}
+.run-modal p {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+.run-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+.run-btn {
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.12s ease;
+}
+.run-btn:active { transform: translateY(1px); }
+.run-btn--ghost {
+  background: var(--surface-3);
+  color: var(--text-muted);
+  border: 1px solid var(--border-strong);
+}
+.run-btn--ghost:hover { color: var(--text); background: var(--surface-2); }
+.run-btn--danger {
+  background: linear-gradient(180deg, #d63333, var(--danger));
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(185, 28, 28, 0.4);
+}
+.run-btn--danger:hover { filter: brightness(1.1); }
+@keyframes vaultSpinSlow {
+  from { transform: rotate(0); }
+  to { transform: rotate(-360deg); }
+}
+/* Flash tóxico da porta (só filter; parte do brightness base 0.92) */
+@keyframes vaultFlash {
+  0%, 100% { filter: brightness(0.92) contrast(1.02); }
+  50%      { filter: brightness(1.28) saturate(1.35) contrast(1.05); }
+}
+
+/* ── Dial de RAM (placa parafusada na coluna de controles) ──
+   Parafusos = spans .bolt (3D); textura real via .panel-tex (z -1, o
+   clip-path já cria o stacking context). Manômetro à esquerda do slider. */
+.base-dial {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(160deg, var(--metal-1) 0%, var(--surface) 38%, var(--metal-3) 100%);
+  padding: 12px 16px 14px;
+  clip-path: polygon(
+    var(--chamfer) 0, calc(100% - var(--chamfer)) 0, 100% var(--chamfer),
+    100% calc(100% - var(--chamfer)), calc(100% - var(--chamfer)) 100%,
+    var(--chamfer) 100%, 0 calc(100% - var(--chamfer)), 0 var(--chamfer)
+  );
+  box-shadow: var(--plate-bevel);
+  transition: transform 0.2s var(--ease-out), box-shadow 0.2s ease;
+}
+/* hover do readout: elevação + glow sutil (decorativo, não muda layout) */
+.base-dial:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--plate-bevel), inset 0 0 0 1px rgba(132, 204, 22, 0.14), 0 10px 24px rgba(0, 0, 0, 0.45);
+}
+.base-dial-tag { top: 7px; right: 22px; }
+.base-dial .ram-slider { flex: 1; min-width: 0; }
+
+/* bolts afastados do chanfro de 12px (senão o clip-path corta a cabeça) */
+.base-dial > .bolt--tl { top: 8px; left: 8px; }
+.base-dial > .bolt--tr { top: 8px; right: 8px; }
+.base-dial > .bolt--bl { bottom: 8px; left: 8px; }
+.base-dial > .bolt--br { bottom: 8px; right: 8px; }
+
+/* ── MANÔMETRO de RAM: mostrador circular com agulha (rotação via --needle,
+   setada inline no JSX a partir de ram/maxRam; -90deg = vazio, +90 = cheio) ── */
+.ram-gauge {
+  position: relative;
+  flex-shrink: 0;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 34% 28%, rgba(222, 235, 195, 0.10), transparent 56%),
+    linear-gradient(160deg, var(--metal-2), #0b0c09);
+  box-shadow:
+    inset 0 2px 6px rgba(0, 0, 0, 0.7),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.6),
+    0 1px 0 var(--bevel-light);
+  pointer-events: none;
+}
+.ram-gauge i { display: block; }
+/* mostrador: tracinhos de escala radiais (anel externo) */
+.ram-gauge-face {
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  background: repeating-conic-gradient(from -90deg,
+    rgba(195, 210, 170, 0.38) 0deg 2.6deg, transparent 2.6deg 22.5deg);
+  -webkit-mask: radial-gradient(closest-side circle, transparent 0 64%, #000 66%);
+  mask: radial-gradient(closest-side circle, transparent 0 64%, #000 66%);
+}
+.ram-gauge-needle {
+  position: absolute;
+  left: 50%;
+  bottom: 50%;
+  width: 2px;
+  height: 21px;
+  margin-left: -1px;
+  border-radius: 1px;
+  transform-origin: 50% 100%;
+  transform: rotate(var(--needle, -90deg));
+  background: linear-gradient(180deg, var(--accent), var(--accent-dark));
+  box-shadow: 0 0 6px var(--accent-glow);
+  transition: transform 0.3s var(--ease-out);
+}
+.ram-gauge-hub {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  margin: -4.5px 0 0 -4.5px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #7d8470, #2a2d26 72%);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+/* ─── Faixa de aviso/MOTD (placa parafusada — bolts 3D nas laterais) ───── */
+.announce-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 18px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  font-size: 13px;
+  background: linear-gradient(170deg, var(--metal-1), var(--surface-2));
+  color: var(--text);
+  box-shadow: var(--plate-bevel);
+  animation: fadeUp 0.3s ease;
+}
+/* barra fina → 1 parafuso por lateral, centrado (some com bl/br) */
+.announce-bar .bolt--bl,
+.announce-bar .bolt--br { display: none; }
+.announce-bar .bolt--tl { top: 50%; margin-top: -4.5px; left: 5px; }
+.announce-bar .bolt--tr { top: 50%; margin-top: -4.5px; right: 5px; }
+
+.announce-bar--info {
+  border-color: rgba(132, 204, 22, 0.35);
+  background: linear-gradient(170deg, rgba(46, 52, 38, 0.95), rgba(22, 26, 16, 0.95)), var(--accent-soft);
+}
+
+.announce-bar--warning {
+  border-color: rgba(185, 28, 28, 0.5);
+  background: linear-gradient(170deg, rgba(52, 30, 28, 0.95), rgba(26, 16, 15, 0.95)), rgba(185, 28, 28, 0.14);
+}
+
+.announce-bar--warning .announce-text { color: #fca5a5; }
+.announce-bar--info .announce-icon { color: var(--accent); }
+.announce-bar--warning .announce-icon { color: var(--danger-bright); }
+.announce-icon { flex-shrink: 0; }
+.announce-text { flex: 1; line-height: 1.4; }
+
+.announce-close {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  color: var(--text-muted);
+  background: transparent;
+  transition: background 0.15s, color 0.15s, transform 0.15s var(--ease-out);
+}
+.announce-close:hover { background: var(--surface-3); color: var(--text); }
+.announce-close:active { transform: scale(0.92); }
+
+/* ─── Botão Atualizar/Sincronizar (chapinha parafusada, bolts 3D) ─────────
+   z-index:0 cria stacking context p/ a textura .panel-tex (z -1) ficar
+   ENTRE o fundo do botão e o conteúdo (legibilidade preservada). */
+.btn-update {
+  position: relative;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 12px 26px;
+  background: linear-gradient(170deg, var(--metal-1), var(--surface-2) 45%, var(--metal-3));
+  color: var(--text-muted);
+  border-radius: 3px;
+  font-weight: 600;
+  font-size: 13px;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  box-shadow: var(--plate-bevel), inset 0 -2px 0 rgba(0, 0, 0, 0.25);
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.15s var(--ease-out), box-shadow 0.18s ease;
+}
+.btn-update .panel-tex { opacity: 0.14; }
+
+.btn-update:hover:not(:disabled) {
+  color: var(--text);
+  border-color: rgba(170, 185, 150, 0.28);
+  transform: translateY(-1px);
+  filter: brightness(1.18);
+  box-shadow: var(--plate-bevel), inset 0 -2px 0 rgba(0, 0, 0, 0.25), 0 8px 18px rgba(0, 0, 0, 0.4);
+}
+.btn-update:active:not(:disabled) { transform: translateY(1px); }
+.btn-update:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-update.has-update {
+  color: var(--accent);
+  border-color: rgba(132, 204, 22, 0.5);
+  background: linear-gradient(170deg, rgba(44, 52, 32, 0.96), rgba(20, 24, 14, 0.96)), var(--accent-soft);
+  box-shadow: var(--plate-bevel), 0 0 0 1px rgba(132, 204, 22, 0.25), 0 4px 16px var(--accent-glow);
+}
+.btn-update.has-update:hover:not(:disabled) {
+  color: var(--mc-grass-light);
+  border-color: var(--accent);
+  filter: brightness(1.1);
+}
+.update-dot {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--surface);
+  box-shadow: 0 0 8px var(--accent-glow);
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+.icon-spin { animation: spin 1s linear infinite; }
+
+/* ─── Barra de progresso ──────────────────────────────────────────────── */
 .progress-bar-wrap {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 9px;
+  animation: fadeUp 0.25s ease;
 }
-
 .progress-text {
-  font-size: 12px;
-  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12.5px;
 }
-
+.progress-stage { color: var(--text-muted); font-weight: 500; }
+.progress-pct {
+  color: var(--accent);
+  font-weight: 400;
+  font-size: 15px;
+  font-family: var(--font-pixel-soft);
+  letter-spacing: 0.03em;
+}
 .progress-track {
-  height: 4px;
+  height: 8px;
   background: var(--surface-3);
-  border-radius: 2px;
+  border-radius: 4px;
   overflow: hidden;
 }
-
 .progress-fill {
   height: 100%;
-  background: var(--accent);
-  border-radius: 2px;
-  transition: width 0.3s ease;
+  background: linear-gradient(90deg, var(--accent-dark), var(--accent));
+  border-radius: 4px;
+  box-shadow: 0 0 14px var(--accent-glow);
+  transition: width 0.35s ease;
+  position: relative;
+  overflow: hidden;
+}
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  animation: progressShine 1.4s ease-in-out infinite;
 }
 
-/* ─── Console tab ────────────────────────────────────────────────────── */
+@keyframes progressShine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ─── Console tab (terminal) ──────────────────────────────────────────── */
 .tab-console {
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  padding: 20px 24px 24px;
+  animation: panelIn 0.32s var(--ease-out);
+}
+
+/* Painel do terminal (header + body): âncora dos parafusos 3D — eles ficam
+   no painel (não rolam com o log) e por cima das duas chapas. */
+.console-panel {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .console-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-muted);
+  padding: 12px 20px;
+  background: linear-gradient(180deg, var(--metal-1), var(--surface) 70%);
+  border: 1px solid rgba(0, 0, 0, 0.6);
+  border-bottom: none;
+  border-radius: 3px 3px 0 0;
+  box-shadow: inset 1px 1px 0 var(--bevel-light);
   flex-shrink: 0;
+  animation: fadeUp 0.3s var(--ease-out) both 40ms;
+}
+
+.console-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* "● REC" pulsando (terminal gravando a atividade da zona) */
+.console-rec {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--danger-bright);
+  animation: recBlink 1.6s steps(1, end) infinite;
+}
+.console-rec i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--danger-bright);
+  box-shadow: 0 0 6px rgba(239, 68, 68, 0.6);
+}
+
+.console-dots { display: flex; gap: 6px; }
+.console-dots i { width: 11px; height: 11px; border-radius: 50%; background: var(--surface-3); }
+.console-dots i:nth-child(1) { background: var(--danger); box-shadow: 0 0 6px rgba(185, 28, 28, 0.6); }
+.console-dots i:nth-child(2) { background: var(--warn); box-shadow: 0 0 6px rgba(245, 158, 11, 0.5); }
+.console-dots i:nth-child(3) { background: var(--accent); box-shadow: 0 0 6px var(--accent-glow); }
+
+.console-count {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
 }
 
 .btn-clear {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   background: transparent;
   color: var(--text-dim);
-  font-size: 11px;
-  padding: 3px 8px;
-  border-radius: 4px;
-  transition: color 0.15s;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 11px;
+  border-radius: var(--radius-sm);
+  transition: color 0.15s ease, background 0.15s ease;
 }
+.btn-clear:hover { color: var(--text); background: rgba(255, 255, 255, 0.05); }
+.btn-clear:active { background: rgba(255, 255, 255, 0.09); }
 
-.btn-clear:hover { color: var(--text-muted); }
-
+/* Corpo do terminal: textura de concreto bem sutil sob o fundo escuro */
 .console-body {
   flex: 1;
   overflow-y: auto;
-  padding: 12px 16px;
-  font-family: 'Consolas', 'Courier New', monospace;
-  font-size: 12px;
-  line-height: 1.6;
+  padding: 16px 18px;
+  background:
+    var(--console-tex) center / 320px,
+    #08080a;
+  background-blend-mode: overlay, normal;
+  border: 1px solid rgba(0, 0, 0, 0.6);
+  border-radius: 0 0 3px 3px;
+  box-shadow: inset 0 0 0 1px rgba(170, 185, 150, 0.04), inset 0 8px 18px rgba(0, 0, 0, 0.5);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.7;
   color: var(--text-muted);
+  animation: fadeIn 0.35s ease both 110ms;
 }
+
+.console-empty {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  text-align: center;
+}
+/* Caveira rachada (mask, recolorível) flutuando no estado vazio */
+.console-empty .console-empty-ic {
+  width: 38px;
+  height: 38px;
+  background-color: var(--text-dim);
+  margin-bottom: 8px;
+  animation: floatY 3.2s ease-in-out infinite;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+}
+.console-empty p { font-family: var(--font); font-size: 13.5px; font-weight: 600; color: var(--text); }
+.console-empty span { font-family: var(--font); font-size: 12px; color: var(--text-dim); max-width: 320px; }
 
 .log-line {
   white-space: pre-wrap;
   word-break: break-all;
+  padding: 1px 0;
+  animation: fadeIn 0.18s ease;
 }
-
+.log-info { color: var(--accent); }
+.log-warn { color: var(--warn); }
 .log-error { color: var(--danger); }
 
 /* ─── Spinners ────────────────────────────────────────────────────────── */
 .spinner-sm-dark {
   display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(0,0,0,0.3);
-  border-top-color: #000;
+  width: 17px;
+  height: 17px;
+  border: 2px solid rgba(6, 20, 11, 0.3);
+  border-top-color: #06140b;
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
+}
+
+/* ─── Responsivo: empilha os readouts em telas estreitas ──────────────── */
+@media (max-width: 920px) {
+  .base-screen {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    gap: clamp(24px, 5vh, 40px);
+  }
+  .base-readout { align-items: center; }
+  .base-readout--controls { width: min(420px, 90%); }
+}
+
+/* ─── Acessibilidade: para giros/varreduras do cofre se reduz-movimento ── */
+@media (prefers-reduced-motion: reduce) {
+  .vault.is-unlocking .vault-knob,
+  .vault.is-unlocking .vault-valve,
+  .vault.is-unlocking .vault-ring::before,
+  .vault.is-unlocking .vault-door,
+  .vault-sheen,
+  .vault-gear--a,
+  .vault-gear--b {
+    animation: none !important;
+  }
 }
