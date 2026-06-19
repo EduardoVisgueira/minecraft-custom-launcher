@@ -257,8 +257,10 @@ export default function RamSlider({ value, min, max, onChange }) {
         step={0.01}
         value={fi}
         onChange={(e) => {
+          // barrinha snapa em GB inteiro (1024) → readout sempre "N GB", sem valor quebrado.
+          // valor exato (ex: 8448 MB) só pela engrenagem.
           const mb = mbOfFracIndex(Number(e.target.value), steps)
-          onChange(clampMb(Math.round(mb / 256) * 256, min, max))
+          onChange(clampMb(Math.round(mb / 1024) * 1024, min, max))
         }}
         className="ram-input"
         style={{ '--pct': `${frac * 100}%` }}

@@ -316,8 +316,9 @@
   display: grid;
   grid-template-columns: minmax(220px, 1fr) auto minmax(220px, 1fr);
   /* os 3 blocos (info · letreiro · painel) numa LINHA só, lá embaixo;
-     o cenário aparece no topo. Pra subir/descer a linha toda: padding-top. */
-  align-items: center;
+     o cenário aparece no topo. Pra subir/descer a linha toda: padding-top.
+     align-items: start → os 3 TOPOS na mesma linha (viga · sobrescrito · topo do card). */
+  align-items: start;
   gap: clamp(20px, 4vw, 56px);
   padding: clamp(190px, 44vh, 520px) clamp(28px, 6vw, 80px) clamp(20px, 4vh, 50px);
   overflow-y: auto;
@@ -464,9 +465,8 @@
   flex-direction: column;
   align-items: center;
   justify-self: center;
-  /* nudge do letreiro na vertical: positivo desce só ele (alinha com info/painel,
-     compensando a altura das correntes). aumenta p/ descer mais. */
-  transform: translateY(clamp(34px, 6vh, 76px));
+  /* com align-items:start os 3 topos já batem; nudge fino só p/ ajuste (+ desce só a placa) */
+  transform: translateY(0);
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -482,7 +482,7 @@
 .play-sign {
   position: relative;
   display: block;
-  width: clamp(300px, 34vw, 470px);
+  width: clamp(250px, 27vw, 380px);
   aspect-ratio: 3 / 2;
   padding: 0;
   border: 0;
