@@ -23,7 +23,7 @@
       "oneClick": false,
       "perMachine": false,
       "allowToChangeInstallationDirectory": true,
-      "createDesktopShortcut": "always",
+      "createDesktopShortcut": false,
       "createStartMenuShortcut": true,
       "shortcutName": "MC Launcher",
       "runAfterFinish": true,

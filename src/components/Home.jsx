@@ -65,11 +65,21 @@ export default function Home({ account, config, onLogout, onAccountChange }) {
   const logsEndRef = useRef(null)
   const atBottomRef = useRef(true)
   const [logSearch, setLogSearch] = useState('')
+  const [showUpdatePrompt, setShowUpdatePrompt] = useState(false)
+  const updatePromptedRef = useRef(false)
 
   // "Atualização disponível": a versão do modpack no config (remoto) difere da
   // última instalada localmente. Inclui a 1ª instalação (installedModpack null).
   const remoteModpack = config?.modpack?.version
   const updateAvailable = !!remoteModpack && remoteModpack !== installedModpack
+
+  // Popup de atualização do modpack ao abrir o launcher (uma vez por sessão).
+  useEffect(() => {
+    if (updateAvailable && !updatePromptedRef.current) {
+      updatePromptedRef.current = true
+      setShowUpdatePrompt(true)
+    }
+  }, [updateAvailable])
 
   // Aviso/MOTD opcional vindo do config (faixa dispensável no topo)
   const announcement = config?.announcement
@@ -467,6 +477,24 @@ export default function Home({ account, config, onLogout, onAccountChange }) {
               </button>
               <button className="run-btn run-btn--danger" onClick={handleKillGame}>
                 Encerrar instância
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Popup de atualização do modpack ao abrir */}
+      {showUpdatePrompt && updateAvailable && (
+        <div className="run-overlay" onMouseDown={() => setShowUpdatePrompt(false)}>
+          <div className="run-modal" onMouseDown={(e) => e.stopPropagation()}>
+            <h3>Atualização do modpack</h3>
+            <p>Há uma versão nova do modpack disponível (v{remoteModpack}). Deseja atualizar agora?</p>
+            <div className="run-actions">
+              <button className="run-btn run-btn--ghost" onClick={() => setShowUpdatePrompt(false)}>
+                Depois
+              </button>
+              <button className="run-btn run-btn--primary" onClick={() => { setShowUpdatePrompt(false); handleUpdate() }}>
+                Atualizar agora
               </button>
             </div>
           </div>

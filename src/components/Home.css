@@ -1047,6 +1047,12 @@
   transition: background 0.15s ease, color 0.15s ease, transform 0.12s ease;
 }
 .run-btn:active { transform: translateY(1px); }
+.run-btn--primary {
+  background: linear-gradient(180deg, var(--mc-grass-light), var(--mc-grass));
+  color: #0c1603;
+  border: 1px solid var(--mc-grass-dark);
+}
+.run-btn--primary:hover { filter: brightness(1.08); }
 .run-btn--ghost {
   background: var(--surface-3);
   color: var(--text-muted);
