@@ -1,5 +1,5 @@
 :root {
-  /* ─── APOCALIPSE Z — "Quarantine Zone" ───────────────────────────────
+  /* ─── Tema do launcher — "Quarantine Zone" ───────────────────────────
      Accent = verde-tóxico/biohazard (sobrescrito por JS a partir do config;
      este valor é o fallback e DEVE casar com theme.accent_color). */
   --accent: #84cc16;            /* verde-tóxico */

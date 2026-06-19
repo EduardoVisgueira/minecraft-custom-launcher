@@ -57,7 +57,7 @@ export default function App() {
   }
 
   // Nome do "OS" exibido na barra de sistema (mantém o nome do launcher do config)
-  const osName = (config?.launcher_name || 'Apocalipse Z').toUpperCase()
+  const osName = (config?.launcher_name || 'MC Launcher').toUpperCase()
 
   return (
     <div className="app">

@@ -163,8 +163,11 @@ export async function loginMicrosoft(parentWindow) {
 
     const win = new BrowserWindow({
       width: 520, height: 640, parent: parentWindow, modal: true,
+      autoHideMenuBar: true,        // tira a barra "File/Edit/View..." da janela de login
+      title: 'Entrar com a Microsoft',
       webPreferences: { nodeIntegration: false, contextIsolation: true, sandbox: true }
     })
+    win.removeMenu()                // remove de vez o menu (Windows)
 
     win.loadURL(authURL)
     let handled = false

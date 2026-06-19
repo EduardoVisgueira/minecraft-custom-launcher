@@ -31,7 +31,7 @@ export default function Splash({ name, logoUrl }) {
             </div>
           )}
         </div>
-        <h1 className="splash-name">{name || 'Apocalipse Z'}</h1>
+        <h1 className="splash-name">{name || 'MC Launcher'}</h1>
         <p className="splash-status">Estabelecendo perímetro…</p>
         <div className="splash-track">
           <div className="splash-fill" />

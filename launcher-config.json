@@ -1,6 +1,6 @@
 {
   "config_url": "https://raw.githubusercontent.com/EduardoVisgueira/launcherz/main/launcher-config.json",
-  "launcher_name": "Apocalipse Z",
+  "launcher_name": "MC Launcher",
   "forge_version": "1.20.1-47.4.10",
   "login_title": "Acesso à Zona",
   "login_subtitle": "Identifique-se para entrar na quarentena",
@@ -35,8 +35,9 @@
   ],
   "modpack": {
     "name": "Zona Morta",
+    "mrpack_url": "https://raw.githubusercontent.com/EduardoVisgueira/launcherz/main/modpack/pack.mrpack",
     "manifest_url": "https://raw.githubusercontent.com/EduardoVisgueira/launcherz/main/manifest.json",
-    "version": "1.0.0",
+    "version": "2.4",
     "forge_version": "1.20.1-47.4.10"
   },
   "ram": {

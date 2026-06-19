@@ -1,4 +1,5 @@
 import AccountSelector from './AccountSelector'
+import SocialLinks from './SocialLinks'
 import radioactiveIcon from '../../assets/game-icons/lorc_radioactive.svg'
 import rustyMetal02Tex from '../../assets/textures/rusty_metal_02.jpg'
 import './StatusBar.css'
@@ -28,6 +29,8 @@ export default function StatusBar({ account, config, online = true, onLogout, on
       </div>
 
       <div className="status-right">
+        {/* Ícones de Discord/site/etc. (do social_links da config) — à esquerda do SETOR */}
+        <SocialLinks links={config?.social_links} variant="icons" className="status-socials" />
         <span className="status-item status-sector">
           <span
             className="status-sector-icon"

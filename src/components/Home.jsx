@@ -4,7 +4,6 @@ import ForgeSelector from './ForgeSelector'
 import Slideshow from './Slideshow'
 import RamSlider from './RamSlider'
 import NewsPanel from './NewsPanel'
-import SocialLinks from './SocialLinks'
 import { HangingChain, CornerBolts } from './McDecor'
 import ironBarsTex from '../../assets/mc-textures/iron_bars.png'
 // Texturas reais (CC0) — profundidade de metal/ferrugem que CSS puro não dá.
@@ -64,6 +63,8 @@ export default function Home({ account, config, onLogout, onAccountChange }) {
   const [showRunning, setShowRunning] = useState(false)
   const [unlocking, setUnlocking] = useState(false)
   const logsEndRef = useRef(null)
+  const atBottomRef = useRef(true)
+  const [logSearch, setLogSearch] = useState('')
 
   // "Atualização disponível": a versão do modpack no config (remoto) difere da
   // última instalada localmente. Inclui a 1ª instalação (installedModpack null).
@@ -103,9 +104,17 @@ export default function Home({ account, config, onLogout, onAccountChange }) {
     }
   }, [])
 
+  // auto-scroll só desce sozinho se o usuário JÁ está no fim; se ele rolou pra
+  // cima, fica parado onde está (igual a um chat). atBottomRef vem do onScroll.
   useEffect(() => {
-    logsEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (atBottomRef.current) logsEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [logs])
+  const handleConsoleScroll = (e) => {
+    const el = e.currentTarget
+    atBottomRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 40
+  }
+  const logQuery = logSearch.trim().toLowerCase()
+  const shownLogs = logQuery ? logs.filter((l) => l.toLowerCase().includes(logQuery)) : logs
 
   // Escolhe o que jogar: o modpack (instância própria) ou outra versão de Forge.
   function handleSelectForge(version, inst) {
@@ -229,8 +238,6 @@ export default function Home({ account, config, onLogout, onAccountChange }) {
             </div>
           )}
 
-          {/* Social links (itera só sobre os preenchidos) */}
-          <SocialLinks links={config?.social_links} variant="icons" className="tab-nav-socials" />
         </div>
       </nav>
 
@@ -383,24 +390,44 @@ export default function Home({ account, config, onLogout, onAccountChange }) {
                   </span>
                   <span>Terminal de Campo</span>
                   <span className="console-rec" aria-hidden="true"><i />REC</span>
-                  <span className="console-count">{logs.length} linhas</span>
+                  <span className="console-count">{logQuery ? `${shownLogs.length}/${logs.length}` : logs.length} linhas</span>
                 </div>
-                <button className="btn-clear" onClick={() => setLogs([])}>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
-                  </svg>
-                  Limpar
-                </button>
+                <div className="console-actions">
+                  <div className="console-search">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" />
+                    </svg>
+                    <input
+                      type="text"
+                      placeholder="Buscar..."
+                      value={logSearch}
+                      onChange={(e) => setLogSearch(e.target.value)}
+                    />
+                    {logSearch && (
+                      <button className="console-search-x" onClick={() => setLogSearch('')} title="Limpar busca">×</button>
+                    )}
+                  </div>
+                  <button className="btn-clear" onClick={() => setLogs([])}>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                    </svg>
+                    Limpar
+                  </button>
+                </div>
               </div>
-              <div className="console-body">
+              <div className="console-body" onScroll={handleConsoleScroll}>
                 {logs.length === 0 ? (
                   <div className="console-empty">
                     <span className="mask-ic console-empty-ic" style={{ '--icon': `url(${skullCrackIcon})` }} aria-hidden="true" />
                     <p>Sem transmissões</p>
                     <span>Entre na Zona ou sincronize o modpack para monitorar a atividade aqui.</span>
                   </div>
+                ) : shownLogs.length === 0 ? (
+                  <div className="console-empty">
+                    <p>Nenhuma linha corresponde a “{logSearch}”</p>
+                  </div>
                 ) : (
-                  logs.map((line, i) => (
+                  shownLogs.map((line, i) => (
                     <div key={i} className={`log-line ${logClass(line)}`}>
                       {line}
                     </div>

@@ -19,7 +19,7 @@ function useClock() {
  * É a zona de arrasto do frameless (-webkit-app-region: drag); os botões e
  * o logo ficam no-drag. `operator` opcional (username) e `online` (status).
  */
-export default function SystemBar({ name = 'APOCALIPSE Z', operator, online = true }) {
+export default function SystemBar({ name = 'MC Launcher', operator, online = true }) {
   const clock = useClock()
 
   return (

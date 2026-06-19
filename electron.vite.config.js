@@ -15,6 +15,7 @@ const EXTERNALS = [
   'electron',
   'undici',
   '@xmcl/core', '@xmcl/installer',
+  'adm-zip',
   ...NODE_BUILTINS,
   ...NODE_BUILTINS.map((m) => `node:${m}`)
 ]
@@ -46,6 +47,9 @@ export default defineConfig({
     root: '.',
     build: {
       outDir: 'dist',
+      // 0 = nunca inlinar asset como data-URI. SVGs pequenos viravam data-URI e
+      // quebravam o `mask: url(...)` no exe empacotado (ícones viravam quadrado).
+      assetsInlineLimit: 0,
       rollupOptions: {
         input: path.resolve(__dirname, 'index.html')
       }

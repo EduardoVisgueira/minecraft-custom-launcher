@@ -1424,7 +1424,47 @@
   line-height: 1.7;
   color: var(--text-muted);
   animation: fadeIn 0.35s ease both 110ms;
+  /* texto do terminal É selecionável (sobrescreve o user-select:none global) p/ copiar */
+  user-select: text;
+  -webkit-user-select: text;
+  cursor: text;
 }
+.console-body .log-line { user-select: text; -webkit-user-select: text; }
+
+/* ── Ações do header do console (busca + Limpar) ── */
+.console-actions { display: flex; align-items: center; gap: 10px; }
+.console-search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-strong);
+  border-radius: 5px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.console-search:focus-within { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+.console-search svg { color: var(--text-dim); flex-shrink: 0; }
+.console-search input {
+  width: 130px;
+  border: 0;
+  background: none;
+  outline: none;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.console-search input::placeholder { color: var(--text-dim); }
+.console-search-x {
+  border: 0;
+  background: none;
+  color: var(--text-dim);
+  font-size: 15px;
+  line-height: 1;
+  padding: 0 2px;
+  cursor: pointer;
+}
+.console-search-x:hover { color: var(--accent); }
 
 .console-empty {
   height: 100%;

@@ -5,7 +5,7 @@ import './McDecor.css'
 
 /**
  * Corrente enferrujada pendurada com a textura real de chain.png (MC 1.20.1).
- * Tema Apocalipse Z: metal oxidado + lanterna como luz de emergência.
+ * Tema do launcher: metal oxidado + lanterna como luz de emergência.
  *
  * Como funciona:
  * - chain.png é 16×16 com duas tiras de 3px na borda esquerda (frente/lado do
