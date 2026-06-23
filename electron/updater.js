@@ -4,7 +4,7 @@ import os from 'os'
 import https from 'https'
 import crypto from 'crypto'
 import AdmZip from 'adm-zip'
-import { getConfig } from './config.js'
+import { getConfig, saveSettings } from './config.js'
 import { getInstanceDir, getModpackInstanceId } from './launcher.js'
 
 function send(win, channel, data) {
@@ -208,6 +208,18 @@ export async function checkAndUpdate(mainWindow) {
   const log = (msg) => send(mainWindow, 'log', msg)
   const progress = (data) => send(mainWindow, 'progress', data)
   const gameDir = getInstanceDir(getModpackInstanceId(cfg))
+  const remoteVer = cfg.modpack?.version
+
+  // B: se a versão instalada == a remota E a instância já tem mods, NÃO rebaixa
+  // nada (evita rebaixar a .mrpack de 30MB à toa). Se faltar mods, segue e baixa.
+  try {
+    const modsDir = path.resolve(gameDir, 'mods')
+    const hasMods = fs.existsSync(modsDir) && fs.readdirSync(modsDir).some((f) => f.endsWith('.jar'))
+    if (remoteVer && cfg.installed_modpack_version === remoteVer && hasMods) {
+      log(`Modpack já está em dia (v${remoteVer}).`)
+      return { success: true, updated: false, upToDate: 0, alreadyCurrent: true }
+    }
+  } catch { /* qualquer erro aqui: segue pro fluxo normal de sync */ }
 
   try {
     let r
@@ -218,6 +230,9 @@ export async function checkAndUpdate(mainWindow) {
     } else {
       return { success: true, updated: false, message: 'Modpack não configurado (defina modpack.mrpack_url ou manifest_url)' }
     }
+    // C: marca a versão como instalada após sincronizar com sucesso (persiste no main,
+    // então para de perguntar mesmo se o usuário não passar pelo botão de atualizar).
+    if (remoteVer) { try { saveSettings({ installed_modpack_version: remoteVer }) } catch { /* ignora */ } }
     log(`Atualização concluída: ${r.downloaded} baixados, ${r.upToDate} em dia`)
     return { success: true, updated: r.downloaded > 0, ...r }
   } catch (err) {

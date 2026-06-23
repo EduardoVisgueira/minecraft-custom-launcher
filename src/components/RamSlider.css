@@ -218,6 +218,15 @@
   color: var(--accent);
   text-shadow: 0 0 12px var(--accent-glow);
 }
+.ram-value.is-risky { color: var(--warn, #f59e0b); text-shadow: 0 0 12px rgba(245, 158, 11, 0.45); }
+.ram-warn {
+  margin-top: 2px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.02em;
+  color: var(--warn, #f59e0b);
+  text-align: center;
+}
 /* ── Popover FLUTUANTE de valor exato (renderizado via portal no body, então
    NÃO é cortado pelo clip/chanfro do card). Posição via style inline (fixed). ── */
 .ram-config-pop {

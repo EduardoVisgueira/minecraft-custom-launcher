@@ -43,7 +43,7 @@
   "ram": {
     "default_mb": 4096,
     "min_mb": 2048,
-    "max_mb": 16384
+    "max_mb": 20480
   },
   "theme": {
     "accent_color": "#84cc16",

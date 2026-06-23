@@ -143,12 +143,13 @@
   mask-image: linear-gradient(90deg, transparent 0, #000 5%, #000 100%);
 }
 .tab-ticker-track {
-  display: inline-flex;
+  display: flex;
+  width: 100%;             /* referência p/ o marquee cruzar o container (sem duplicar itens) */
   align-items: center;
   gap: 34px;
   white-space: nowrap;
   will-change: transform;
-  animation: tabTicker 30s linear infinite;
+  animation: tabTicker 26s linear infinite;
 }
 .tab-ticker:hover .tab-ticker-track { animation-play-state: paused; }
 .tab-ticker-item {
@@ -177,8 +178,8 @@
 }
 /* da esquerda p/ a direita (2 cópias = loop sem emenda) */
 @keyframes tabTicker {
-  from { transform: translateX(-50%); }
-  to   { transform: translateX(0); }
+  from { transform: translateX(100%); }
+  to   { transform: translateX(-100%); }
 }
 @media (prefers-reduced-motion: reduce) {
   .tab-ticker-track { animation: none; }

@@ -7,7 +7,7 @@ import dialGrimeTex from '../../assets/textures/rusty_metal_02.jpg'
 // mesma chapa do card/topo (grime via .panel-tex) — popover combina com o resto
 import metalPlate02Tex from '../../assets/textures/metal_plate_02.jpg'
 
-const STEPS = [1024, 2048, 3072, 4096, 6144, 8192, 12288, 16384]
+const STEPS = [1024, 2048, 3072, 4096, 6144, 8192, 12288, 16384, 20480]
 // rótulo: GB inteiro vira "N GB"; qualquer outro valor exato mostra "N MB"
 const label = (mb) => (mb % 1024 === 0 ? `${mb / 1024} GB` : `${mb} MB`)
 const short = (mb) => (mb >= 1024 ? `${mb / 1024}` : `${mb}`)
@@ -43,7 +43,9 @@ const mbOfFracIndex = (fi, steps) => {
  * agulha verde-tóxica com brilho e contrapeso. Slider fino embaixo seleciona o
  * step. Tudo em SVG p/ posicionar ticks/números na semicircunferência com precisão.
  */
-export default function RamSlider({ value, min, max, onChange }) {
+export default function RamSlider({ value, min, max, systemRam = 0, onChange }) {
+  // aviso simples se alocar acima da RAM física (deixa ~1GB pro SO)
+  const risky = systemRam > 0 && value > systemRam - 1024
   const steps = STEPS.filter((s) => s >= min && s <= max)
   const n = steps.length
   // índice fracionário do valor atual (suporta valor exato entre steps)
@@ -247,8 +249,13 @@ export default function RamSlider({ value, min, max, onChange }) {
 
       <div className="ram-readout">
         <span className="ram-label">Memória RAM</span>
-        <span className="ram-value">{label(value)}</span>
+        <span className={`ram-value${risky ? ' is-risky' : ''}`}>{label(value)}</span>
       </div>
+      {risky && (
+        <span className="ram-warn" title={`Seu PC tem ~${Math.round(systemRam / 1024)} GB de RAM`}>
+          ⚠ acima da RAM do PC — pode travar
+        </span>
+      )}
 
       <input
         type="range"

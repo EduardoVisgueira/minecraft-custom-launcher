@@ -45,10 +45,11 @@ const slugify = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '')
 export default function Home({ account, config, onLogout, onAccountChange }) {
   const [tab, setTab] = useState('home')
   const [newsFocus, setNewsFocus] = useState(null) // índice da transmissão aberta pela esteira
-  const [ram, setRam] = useState(config?.ram?.default_mb || 4096)
+  const [ram, setRam] = useState(config?.ram_mb || config?.ram?.default_mb || 4096)
   const [maxRam, setMaxRam] = useState(config?.ram?.max_mb || 16384)
-  // Versão pra jogar: começa no MODPACK (default), mas dá pra trocar pra outra Forge.
-  const [forgeVersion, setForgeVersion] = useState(config?.modpack?.forge_version || config?.forge_version || '')
+  const [systemRam, setSystemRam] = useState(0)
+  // Versão pra jogar: começa na escolhida (salva) → senão MODPACK → senão Forge do config.
+  const [forgeVersion, setForgeVersion] = useState(config?.selected_forge || config?.modpack?.forge_version || config?.forge_version || '')
   const [showForge, setShowForge] = useState(false)
   const [forgeAnchor, setForgeAnchor] = useState(null)
   // Instância isolada selecionada (default = a do modpack)
@@ -86,17 +87,18 @@ export default function Home({ account, config, onLogout, onAccountChange }) {
   const announceText = typeof announcement === 'string' ? announcement : announcement?.text
   const announceType = announcement?.type === 'warning' ? 'warning' : 'info'
 
-  // Limita a alocação de RAM à memória física da máquina (reserva ~2GB p/ o SO)
+  // RAM física da máquina — usada só p/ AVISAR (o usuário pode alocar até o máximo
+  // do config mesmo sem ter tudo; o RamSlider mostra um warning se passar da RAM do PC).
   useEffect(() => {
     window.electronAPI.getSystemRam?.().then((totalMb) => {
-      if (!totalMb) return
-      const configMax = config?.ram?.max_mb || 16384
-      const safeMax = Math.max(config?.ram?.min_mb || 2048, totalMb - 2048)
-      const effectiveMax = Math.min(configMax, safeMax)
-      setMaxRam(effectiveMax)
-      setRam(prev => Math.min(prev, effectiveMax))
+      if (totalMb) setSystemRam(totalMb)
     }).catch(() => {})
   }, [])
+
+  // Persiste a RAM escolhida (sem isso voltava ao padrão a cada abertura).
+  useEffect(() => {
+    if (ram) window.electronAPI.saveSettings?.({ ram_mb: ram })
+  }, [ram])
 
   useEffect(() => {
     window.electronAPI.onLog((msg) => {
@@ -131,6 +133,7 @@ export default function Home({ account, config, onLogout, onAccountChange }) {
     setForgeVersion(version)
     setInstanceId(inst || version)   // modpack passa o id; versão avulsa usa a própria versão
     setShowForge(false)
+    window.electronAPI.saveSettings?.({ selected_forge: version })  // persiste a escolha
   }
 
   async function handleUpdate() {
@@ -229,8 +232,8 @@ export default function Home({ account, config, onLogout, onAccountChange }) {
           {config?.news?.length > 0 && (
             <div className="tab-ticker">
               <div className="tab-ticker-track">
-                {[...config.news, ...config.news].map((item, i) => {
-                  const real = i % config.news.length
+                {config.news.map((item, i) => {
+                  const real = i
                   return (
                     <button
                       type="button"
@@ -363,6 +366,7 @@ export default function Home({ account, config, onLogout, onAccountChange }) {
                     value={ram}
                     min={config?.ram?.min_mb || 2048}
                     max={maxRam}
+                    systemRam={systemRam}
                     onChange={setRam}
                   />
                 </div>
