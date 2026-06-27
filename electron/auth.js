@@ -214,7 +214,12 @@ export function loginOffline(username) {
   if (trimmed.length < 3 || trimmed.length > 16) {
     return { success: false, error: 'Nome deve ter entre 3 e 16 caracteres' }
   }
-  const uuid = 'offline-' + Buffer.from(trimmed.toLowerCase()).toString('hex').padEnd(28, '0').substring(0, 28)
+  // UUID offline no padrão do Minecraft: MD5 de "OfflinePlayer:<nome>" (UUID v3),
+  // sem traços. O formato antigo ('offline-...') não era um UUID válido.
+  const md5 = crypto.createHash('md5').update('OfflinePlayer:' + trimmed).digest()
+  md5[6] = (md5[6] & 0x0f) | 0x30
+  md5[8] = (md5[8] & 0x3f) | 0x80
+  const uuid = md5.toString('hex')
   const account = { type: 'offline', uuid, username: trimmed, accessToken: '0', refreshToken: null }
   const data = loadAccounts()
   const idx = data.accounts.findIndex(a => a.uuid === uuid)

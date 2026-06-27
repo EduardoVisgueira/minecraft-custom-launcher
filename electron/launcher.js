@@ -371,8 +371,10 @@ export async function launch(opts, mainWindow) {
     const proc = await xmclLaunch({
       gamePath: instanceDir, resourcePath: gameDir, javaPath, version: versionId,
       minMemory: minRam, maxMemory: maxRam,
+      // nome+uuid REAIS vão em gameProfile (senão o @xmcl usa "Steve" + uuid aleatório,
+      // o que causava o "entra como Steve" e o "Invalid signature for profile public key").
+      gameProfile: { name: opts.username, id: opts.uuid },
       accessToken: opts.accessToken || '0',
-      username: opts.username, uuid: opts.uuid,
       userType: opts.accountType === 'microsoft' ? 'msa' : 'legacy',
       extraJVMArgs: ['-XX:+UseG1GC', '-XX:+ParallelRefProcEnabled', '-XX:MaxGCPauseMillis=200']
     })
