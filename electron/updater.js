@@ -63,10 +63,16 @@ function downloadFile(url, dest) {
   })
 }
 
-function fetchJSON(url) {
+function fetchJSON(url, extraHeaders = {}) {
   return new Promise((resolve, reject) => {
     try { assertHttps(url, 'URL do manifest') } catch (e) { return reject(e) }
-    https.get(url, (res) => {
+    const parsed = new URL(url)
+    const options = {
+      hostname: parsed.hostname,
+      path: parsed.pathname + parsed.search,
+      headers: { 'User-Agent': 'mc-launcher', ...extraHeaders }
+    }
+    https.get(options, (res) => {
       let data = ''
       res.on('data', (c) => { data += c })
       res.on('end', () => { try { resolve(JSON.parse(data)) } catch (e) { reject(e) } })
@@ -206,7 +212,7 @@ const isPlaceholder = (s) => !s || /SEU_|EXEMPLO|exemplo|SEU_SERVIDOR/i.test(s)
 // o manifesto local (.gh_tree_shas.json), baixa só o que mudou, faz sweep dos removidos.
 async function updateFromGithubTree(treeUrl, rawBase, gameDir, log, progress) {
   log('Verificando modpack (GitHub)...')
-  const treeData = await fetchJSON(treeUrl)
+  const treeData = await fetchJSON(treeUrl, { Accept: 'application/vnd.github+json' })
   if (!Array.isArray(treeData?.tree)) throw new Error('Resposta inválida da GitHub Tree API')
 
   // Só arquivos dentro de pastas (ignora README.md, launcher-config.json, etc. na raiz)
