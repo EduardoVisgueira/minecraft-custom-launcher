@@ -201,25 +201,88 @@ async function updateFromMrpack(mrpackUrl, gameDir, log, progress) {
 
 const isPlaceholder = (s) => !s || /SEU_|EXEMPLO|exemplo|SEU_SERVIDOR/i.test(s)
 
+// ── Fluxo GitHub Tree (pastas do repo público: github_tree_url + github_raw_base_url) ──
+// Busca a árvore do repo via GitHub API, compara o git blob SHA de cada arquivo com
+// o manifesto local (.gh_tree_shas.json), baixa só o que mudou, faz sweep dos removidos.
+async function updateFromGithubTree(treeUrl, rawBase, gameDir, log, progress) {
+  log('Verificando modpack (GitHub)...')
+  const treeData = await fetchJSON(treeUrl)
+  if (!Array.isArray(treeData?.tree)) throw new Error('Resposta inválida da GitHub Tree API')
+
+  // Só arquivos dentro de pastas (ignora README.md, launcher-config.json, etc. na raiz)
+  const blobs = treeData.tree.filter(e => e.type === 'blob' && e.path.includes('/'))
+
+  // SHA manifest salvo da última sync: { "mods/mod.jar": "gitblobsha...", ... }
+  const shaManifestPath = path.join(gameDir, '.gh_tree_shas.json')
+  let storedShas = {}
+  try {
+    if (fs.existsSync(shaManifestPath)) storedShas = JSON.parse(fs.readFileSync(shaManifestPath, 'utf-8'))
+  } catch {}
+
+  const base = rawBase.replace(/\/$/, '')
+  const wantedPaths = new Set()
+  const toDownload = []
+
+  for (const entry of blobs) {
+    wantedPaths.add(entry.path)
+    if (storedShas[entry.path] !== entry.sha) {
+      toDownload.push({ path: entry.path, url: `${base}/${entry.path}`, sha: entry.sha })
+    }
+  }
+
+  if (toDownload.length === 0) {
+    log(`Modpack já está em dia (${blobs.length} arquivo(s) verificado(s)).`)
+    return { downloaded: 0, upToDate: blobs.length }
+  }
+
+  log(`${toDownload.length} arquivo(s) para atualizar...`)
+  let downloaded = 0
+  for (let i = 0; i < toDownload.length; i++) {
+    const file = toDownload[i]
+    progress({ type: 'modpack', current: i + 1, total: toDownload.length, text: `Baixando ${path.basename(file.path)}...` })
+    log(`Atualizando ${path.basename(file.path)}...`)
+    await downloadFile(file.url, path.resolve(gameDir, file.path.replace(/\//g, path.sep)))
+    storedShas[file.path] = file.sha
+    downloaded++
+  }
+
+  // Remove do manifesto entradas que sumiram do repo
+  for (const p of Object.keys(storedShas)) {
+    if (!wantedPaths.has(p)) delete storedShas[p]
+  }
+  fs.writeFileSync(shaManifestPath, JSON.stringify(storedShas, null, 2))
+
+  // Sweep: remove localmente arquivos que saíram do repo
+  const managedDirs = [...new Set(blobs.map(e => e.path.split('/')[0]).filter(Boolean))]
+  sweepManaged(gameDir, wantedPaths, managedDirs, log)
+
+  return { downloaded, upToDate: blobs.length - downloaded }
+}
+
 export async function checkAndUpdate(mainWindow) {
   const cfg = getConfig()
   const mrpackUrl = cfg.modpack?.mrpack_url
   const manifestUrl = cfg.modpack?.manifest_url
+  const treeUrl = cfg.modpack?.github_tree_url
+  const rawBase = cfg.modpack?.github_raw_base_url
   const log = (msg) => send(mainWindow, 'log', msg)
   const progress = (data) => send(mainWindow, 'progress', data)
   const gameDir = getInstanceDir(getModpackInstanceId(cfg))
   const remoteVer = cfg.modpack?.version
 
-  // B: se a versão instalada == a remota E a instância já tem mods, NÃO rebaixa
-  // nada (evita rebaixar a .mrpack de 30MB à toa). Se faltar mods, segue e baixa.
-  try {
-    const modsDir = path.resolve(gameDir, 'mods')
-    const hasMods = fs.existsSync(modsDir) && fs.readdirSync(modsDir).some((f) => f.endsWith('.jar'))
-    if (remoteVer && cfg.installed_modpack_version === remoteVer && hasMods) {
-      log(`Modpack já está em dia (v${remoteVer}).`)
-      return { success: true, updated: false, upToDate: 0, alreadyCurrent: true }
-    }
-  } catch { /* qualquer erro aqui: segue pro fluxo normal de sync */ }
+  const isGithubTree = !isPlaceholder(treeUrl) && !isPlaceholder(rawBase)
+
+  // B: skip de versão só para modos mrpack/manifest (github_tree tem diff por SHA próprio)
+  if (!isGithubTree) {
+    try {
+      const modsDir = path.resolve(gameDir, 'mods')
+      const hasMods = fs.existsSync(modsDir) && fs.readdirSync(modsDir).some((f) => f.endsWith('.jar'))
+      if (remoteVer && cfg.installed_modpack_version === remoteVer && hasMods) {
+        log(`Modpack já está em dia (v${remoteVer}).`)
+        return { success: true, updated: false, upToDate: 0, alreadyCurrent: true }
+      }
+    } catch { /* qualquer erro aqui: segue pro fluxo normal de sync */ }
+  }
 
   try {
     let r
@@ -227,11 +290,12 @@ export async function checkAndUpdate(mainWindow) {
       r = await updateFromMrpack(mrpackUrl, gameDir, log, progress)
     } else if (!isPlaceholder(manifestUrl)) {
       r = await updateFromManifest(manifestUrl, gameDir, log, progress)
+    } else if (isGithubTree) {
+      r = await updateFromGithubTree(treeUrl, rawBase, gameDir, log, progress)
     } else {
-      return { success: true, updated: false, message: 'Modpack não configurado (defina modpack.mrpack_url ou manifest_url)' }
+      return { success: true, updated: false, message: 'Modpack não configurado (defina modpack.mrpack_url, manifest_url ou github_tree_url+github_raw_base_url)' }
     }
-    // C: marca a versão como instalada após sincronizar com sucesso (persiste no main,
-    // então para de perguntar mesmo se o usuário não passar pelo botão de atualizar).
+    // C: marca a versão como instalada após sincronizar com sucesso
     if (remoteVer) { try { saveSettings({ installed_modpack_version: remoteVer }) } catch { /* ignora */ } }
     log(`Atualização concluída: ${r.downloaded} baixados, ${r.upToDate} em dia`)
     return { success: true, updated: r.downloaded > 0, ...r }
