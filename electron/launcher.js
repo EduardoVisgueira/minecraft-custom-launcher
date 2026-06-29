@@ -376,8 +376,11 @@ export async function launch(opts, mainWindow) {
       gameProfile: { name: opts.username, id: opts.uuid },
       accessToken: opts.accessToken || '0',
       userType: opts.accountType === 'microsoft' ? 'msa' : 'legacy',
-      extraJVMArgs: ['-XX:+UseG1GC', '-XX:+ParallelRefProcEnabled', '-XX:MaxGCPauseMillis=200']
+      extraJVMArgs: ['-XX:+UseG1GC', '-XX:+ParallelRefProcEnabled', '-XX:MaxGCPauseMillis=200'],
+      // detached: o jogo roda em processo próprio; fechar o launcher NÃO mata o MC
+      extraExecOption: { detached: true }
     })
+    proc.unref?.()  // launcher não fica preso ao jogo (pode fechar sem derrubar o MC)
 
     activeProc = proc
     proc.stdout?.on('data', (d) => log(d.toString()))

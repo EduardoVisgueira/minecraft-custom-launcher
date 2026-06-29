@@ -66,7 +66,6 @@ export default function Home({ account, config, onLogout, onAccountChange }) {
   const logsEndRef = useRef(null)
   const atBottomRef = useRef(true)
   const [logSearch, setLogSearch] = useState('')
-  const [showUpdatePrompt, setShowUpdatePrompt] = useState(false)
   const updatePromptedRef = useRef(false)
 
   // "Atualização disponível": a versão do modpack no config (remoto) difere da
@@ -74,13 +73,25 @@ export default function Home({ account, config, onLogout, onAccountChange }) {
   const remoteModpack = config?.modpack?.version
   const updateAvailable = !!remoteModpack && remoteModpack !== installedModpack
 
-  // Popup de atualização do modpack ao abrir o launcher (uma vez por sessão).
+  // Auto-atualiza o modpack ao abrir o launcher (baixa só o que falta; é instantâneo
+  // quando já está em dia, graças ao skip por versão no updater). Roda uma vez.
   useEffect(() => {
-    if (updateAvailable && !updatePromptedRef.current) {
-      updatePromptedRef.current = true
-      setShowUpdatePrompt(true)
-    }
-  }, [updateAvailable])
+    if (updatePromptedRef.current) return
+    if (!config?.modpack?.mrpack_url && !config?.modpack?.manifest_url) return
+    updatePromptedRef.current = true
+    ;(async () => {
+      setUpdating(true)
+      const result = await window.electronAPI.checkUpdates()
+      setUpdating(false)
+      setProgress(null)
+      if (result?.success) {
+        if (remoteModpack) setInstalledModpack(remoteModpack)
+        if (result.downloaded > 0) setLogs(prev => [...prev, `Modpack atualizado: ${result.downloaded} arquivo(s).`])
+      } else if (result) {
+        setLogs(prev => [...prev, `Erro ao atualizar: ${result.error}`])
+      }
+    })()
+  }, [])
 
   // Aviso/MOTD opcional vindo do config (faixa dispensável no topo)
   const announcement = config?.announcement
@@ -91,7 +102,15 @@ export default function Home({ account, config, onLogout, onAccountChange }) {
   // do config mesmo sem ter tudo; o RamSlider mostra um warning se passar da RAM do PC).
   useEffect(() => {
     window.electronAPI.getSystemRam?.().then((totalMb) => {
-      if (totalMb) setSystemRam(totalMb)
+      if (!totalMb) return
+      setSystemRam(totalMb)
+      // auto-correção: se o usuário ainda não definiu RAM, sugere ~metade do PC
+      // (folga p/ o SO), limitada ao máximo do config.
+      if (!config?.ram_mb) {
+        const minMb = config?.ram?.min_mb || 2048
+        const rec = Math.min(maxRam, Math.max(minMb, Math.round((totalMb / 2) / 1024) * 1024))
+        setRam(rec)
+      }
     }).catch(() => {})
   }, [])
 
@@ -487,23 +506,6 @@ export default function Home({ account, config, onLogout, onAccountChange }) {
         </div>
       )}
 
-      {/* Popup de atualização do modpack ao abrir */}
-      {showUpdatePrompt && updateAvailable && (
-        <div className="run-overlay" onMouseDown={() => setShowUpdatePrompt(false)}>
-          <div className="run-modal" onMouseDown={(e) => e.stopPropagation()}>
-            <h3>Atualização do modpack</h3>
-            <p>Há uma versão nova do modpack disponível (v{remoteModpack}). Deseja atualizar agora?</p>
-            <div className="run-actions">
-              <button className="run-btn run-btn--ghost" onClick={() => setShowUpdatePrompt(false)}>
-                Depois
-              </button>
-              <button className="run-btn run-btn--primary" onClick={() => { setShowUpdatePrompt(false); handleUpdate() }}>
-                Atualizar agora
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
