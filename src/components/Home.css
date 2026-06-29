@@ -332,7 +332,7 @@
   gap: 14px;
   min-width: 0;
 }
-.base-readout--controls { align-items: stretch; max-width: 300px; margin-left: auto; }
+.base-readout--controls { align-items: stretch; width: 300px; max-width: 300px; min-width: 300px; margin-left: auto; overflow: hidden; }
 
 /* Stagger: os 3 blocos da BASE entram em cascata ao abrir a aba */
 .base-screen > .base-readout--status   { animation: fadeUp 0.45s var(--ease-out) both; animation-delay: 60ms; }
@@ -1285,8 +1285,17 @@
   align-items: center;
   justify-content: space-between;
   font-size: 12.5px;
+  min-width: 0;
+  gap: 6px;
 }
-.progress-stage { color: var(--text-muted); font-weight: 500; }
+.progress-stage {
+  color: var(--text-muted);
+  font-weight: 500;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .progress-pct {
   color: var(--accent);
   font-weight: 400;
