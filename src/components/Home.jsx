@@ -77,7 +77,7 @@ export default function Home({ account, config, onLogout, onAccountChange }) {
   // quando já está em dia, graças ao skip por versão no updater). Roda uma vez.
   useEffect(() => {
     if (updatePromptedRef.current) return
-    if (!config?.modpack?.mrpack_url && !config?.modpack?.manifest_url) return
+    if (!config?.modpack?.mrpack_url && !config?.modpack?.manifest_url && !config?.modpack?.github_tree_url) return
     updatePromptedRef.current = true
     ;(async () => {
       setUpdating(true)
